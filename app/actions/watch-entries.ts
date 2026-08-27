@@ -43,6 +43,7 @@ export async function addMovieEntry(
   if (!user) return { error: "Non connecté." };
 
   const isRewatch = formData.get("is_rewatch") === "on";
+  const language = formData.get("language") === "VO" ? "VO" : "VF";
   const locationId = await resolveLocationId(
     supabase,
     String(formData.get("location") ?? ""),
@@ -59,6 +60,7 @@ export async function addMovieEntry(
     release_year: formData.get("release_year") ? Number(formData.get("release_year")) : null,
     watched_on: String(formData.get("watched_on")),
     location_id: locationId,
+    language,
     rating: isRewatch ? null : Number(formData.get("rating")),
     comment: isRewatch ? null : String(formData.get("comment") ?? "").trim() || null,
     is_rewatch: isRewatch,
@@ -83,6 +85,7 @@ export async function addSeriesEntry(
 
   const isRewatch = formData.get("is_rewatch") === "on";
   const granularity = String(formData.get("granularity")) as "season" | "episode";
+  const language = formData.get("language") === "VO" ? "VO" : "VF";
   const locationId = await resolveLocationId(
     supabase,
     String(formData.get("location") ?? ""),
@@ -103,6 +106,7 @@ export async function addSeriesEntry(
       granularity === "episode" ? String(formData.get("episode_name") ?? "").trim() || null : null,
     watched_on: String(formData.get("watched_on")),
     location_id: locationId,
+    language,
     rating: isRewatch ? null : Number(formData.get("rating")),
     comment: isRewatch ? null : String(formData.get("comment") ?? "").trim() || null,
     is_rewatch: isRewatch,

@@ -27,9 +27,27 @@ export function ReactionBar({
     counts.set(r.emoji, entry);
   }
 
+  const isAnonymous = currentUserId === "";
+
   function react(emoji: ReactionEmoji) {
     setPickerOpen(false);
     startTransition(() => toggleReaction(entryId, emoji, pathname));
+  }
+
+  if (isAnonymous) {
+    return (
+      <div className="flex items-center gap-2">
+        {[...counts.entries()].map(([emoji, { count }]) => (
+          <span
+            key={emoji}
+            className="flex items-center gap-1.5 rounded-full border border-border bg-bg-elev-2 px-2.5 py-1 text-[13px] text-text-muted"
+          >
+            <span>{emoji}</span>
+            <span>{count}</span>
+          </span>
+        ))}
+      </div>
+    );
   }
 
   return (

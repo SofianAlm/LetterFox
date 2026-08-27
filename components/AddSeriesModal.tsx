@@ -37,6 +37,7 @@ export function AddSeriesModal({
   const [episodeNumber, setEpisodeNumber] = useState<number | null>(null);
   const [isRewatch, setIsRewatch] = useState(false);
   const [rating, setRating] = useState(7);
+  const [language, setLanguage] = useState<"VF" | "VO">("VF");
   const [submitted, setSubmitted] = useState(false);
   const [state, formAction, pending] = useActionState(addSeriesEntry, initialState);
 
@@ -219,6 +220,25 @@ export function AddSeriesModal({
                     }`}
                   >
                     {g === "season" ? "Saison entière" : "Épisode précis"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <input type="hidden" name="language" value={language} />
+            <div>
+              <label className="mb-2 block text-[13px] font-bold text-text-muted">Langue</label>
+              <div className="flex rounded-[11px] border border-border bg-bg-elev-2 p-1">
+                {(["VF", "VO"] as const).map((l) => (
+                  <button
+                    key={l}
+                    type="button"
+                    onClick={() => setLanguage(l)}
+                    className={`flex-1 rounded-[8px] py-2 text-[13.5px] font-bold ${
+                      language === l ? "bg-purple text-bg" : "text-text-muted"
+                    }`}
+                  >
+                    {l}
                   </button>
                 ))}
               </div>

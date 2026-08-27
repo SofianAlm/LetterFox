@@ -96,7 +96,9 @@ export function SeriesDetailContent({
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="text-[13.5px]">
                       <span className="font-bold">{e.profiles?.display_name}</span>
-                      <span className="ml-2 text-text-faint">{formatFullDate(e.watched_on)}</span>
+                      <span className="ml-2 text-text-faint">
+                        {formatFullDate(e.watched_on)} · {e.language}
+                      </span>
                     </div>
                     {!e.is_rewatch && (
                       <span className="inline-flex items-baseline gap-1 rounded-full bg-purple-soft px-2.5 py-1 font-display text-xs font-extrabold text-purple">

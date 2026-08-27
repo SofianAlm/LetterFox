@@ -77,6 +77,7 @@ export function EpisodeRow({
                 <div className="text-xs text-text-faint">
                   {e.profiles?.display_name} · {formatFullDate(e.watched_on)}
                   {e.locations?.name && ` · ${e.locations.name}`}
+                  {` · ${e.language}`}
                 </div>
                 {e.is_rewatch ? (
                   <p className="mt-1 text-[13px] text-text-faint">Rewatch — pas de nouvel avis.</p>

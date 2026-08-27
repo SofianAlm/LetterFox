@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: oklch(14% 0.014 270);
-  --color-bg-elev: oklch(18% 0.015 270);
-  --color-bg-elev-2: oklch(22% 0.016 270);
-  --color-bg-elev-3: oklch(27% 0.017 270);
+  --color-bg: oklch(12% 0.024 265);
+  --color-bg-elev: oklch(16% 0.026 265);
+  --color-bg-elev-2: oklch(20% 0.028 265);
+  --color-bg-elev-3: oklch(25% 0.03 265);
 
   --color-border: oklch(100% 0 0 / 0.08);
-  --color-border-strong: oklch(100% 0 0 / 0.16);
+  --color-border-strong: oklch(100% 0 0 / 0.18);
 
-  --color-text: oklch(95% 0.005 270);
-  --color-text-muted: oklch(72% 0.012 265);
-  --color-text-faint: oklch(54% 0.012 265);
+  --color-text: oklch(96% 0.006 265);
+  --color-text-muted: oklch(72% 0.016 265);
+  --color-text-faint: oklch(52% 0.016 265);
 
   --color-blue: oklch(70% 0.16 250);
   --color-blue-2: oklch(61% 0.16 250);
