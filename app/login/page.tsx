@@ -1,9 +1,11 @@
 import { FoxLogo } from "@/components/FoxLogo";
 import { LoginForm } from "@/components/LoginForm";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function LoginPage() {
   return (
     <div className="flex min-h-screen">
+      <ThemeToggle className="fixed right-5 top-5 z-20 h-9 w-9" />
       <div className="relative hidden flex-1 flex-col justify-between overflow-hidden border-r border-border bg-bg-elev p-14 lg:flex">
         <div
           className="pointer-events-none absolute inset-0"

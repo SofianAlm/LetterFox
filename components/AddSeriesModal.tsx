@@ -22,14 +22,18 @@ const initialState: AddEntryState = { error: null };
 export function AddSeriesModal({
   onClose,
   locations,
+  initialSelected,
+  onAdded,
 }: {
   onClose: () => void;
   locations: string[];
+  initialSelected?: TvResult;
+  onAdded?: () => void;
 }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<TvResult[]>([]);
-  const [selected, setSelected] = useState<TvResult | null>(null);
+  const [selected, setSelected] = useState<TvResult | null>(initialSelected ?? null);
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [granularity, setGranularity] = useState<"season" | "episode">("season");
   const [seasonNumber, setSeasonNumber] = useState<number | null>(null);
@@ -81,10 +85,11 @@ export function AddSeriesModal({
 
   useEffect(() => {
     if (submitted && !pending && state.error === null) {
+      onAdded?.();
       router.refresh();
       onClose();
     }
-  }, [submitted, pending, state, router, onClose]);
+  }, [submitted, pending, state, router, onClose, onAdded]);
 
   const selectedEpisode = episodes.find((e) => e.episode_number === episodeNumber);
 
@@ -216,7 +221,7 @@ export function AddSeriesModal({
                     type="button"
                     onClick={() => setGranularity(g)}
                     className={`flex-1 rounded-[8px] py-2.5 text-[13.5px] font-bold ${
-                      granularity === g ? "bg-purple text-bg" : "text-text-muted"
+                      granularity === g ? "bg-purple text-on-accent" : "text-text-muted"
                     }`}
                   >
                     {g === "season" ? "Saison entière" : "Épisode précis"}
@@ -235,7 +240,7 @@ export function AddSeriesModal({
                     type="button"
                     onClick={() => setLanguage(l)}
                     className={`flex-1 rounded-[8px] py-2 text-[13.5px] font-bold ${
-                      language === l ? "bg-purple text-bg" : "text-text-muted"
+                      language === l ? "bg-purple text-on-accent" : "text-text-muted"
                     }`}
                   >
                     {l}
@@ -351,7 +356,7 @@ export function AddSeriesModal({
               <button
                 type="submit"
                 disabled={pending || seasonNumber === null}
-                className="rounded-[10px] bg-purple px-5 py-3 text-sm font-bold text-bg disabled:opacity-60"
+                className="rounded-[10px] bg-purple px-5 py-3 text-sm font-bold text-on-accent disabled:opacity-60"
               >
                 {pending ? "Ajout…" : "Ajouter"}
               </button>

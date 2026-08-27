@@ -27,6 +27,7 @@ export type TmdbMovieResult = {
   title: string;
   release_date: string | null;
   poster_path: string | null;
+  genre_ids: number[];
 };
 
 export type TmdbTvResult = {
@@ -34,6 +35,7 @@ export type TmdbTvResult = {
   name: string;
   first_air_date: string | null;
   poster_path: string | null;
+  genre_ids: number[];
 };
 
 export async function searchMovies(query: string) {
@@ -44,6 +46,18 @@ export async function searchMovies(query: string) {
 export async function searchTv(query: string) {
   const data = await tmdbFetch<{ results: TmdbTvResult[] }>("/search/tv", { query });
   return data.results;
+}
+
+export type TmdbGenre = { id: number; name: string };
+
+export async function getMovieGenres() {
+  const data = await tmdbFetch<{ genres: TmdbGenre[] }>("/genre/movie/list");
+  return data.genres;
+}
+
+export async function getTvGenres() {
+  const data = await tmdbFetch<{ genres: TmdbGenre[] }>("/genre/tv/list");
+  return data.genres;
 }
 
 export type TmdbTvDetails = {

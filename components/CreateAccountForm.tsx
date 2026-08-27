@@ -56,7 +56,7 @@ export function CreateAccountForm() {
       <button
         type="submit"
         disabled={pending}
-        className="mt-1 self-start rounded-[10px] bg-accent px-5 py-3 text-sm font-bold text-bg disabled:opacity-60"
+        className="mt-1 self-start rounded-[10px] bg-accent px-5 py-3 text-sm font-bold text-on-accent disabled:opacity-60"
       >
         {pending ? "Création…" : "Créer le compte"}
       </button>

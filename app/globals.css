@@ -29,8 +29,28 @@
   --color-accent-soft: oklch(70% 0.16 292 / 0.16);
   --color-accent-soft-strong: oklch(70% 0.16 292 / 0.34);
 
+  /* Text sitting on a solid accent/blue/purple button — stays dark navy in
+     both themes since those brand colors are always mid-to-high lightness. */
+  --color-on-accent: oklch(20% 0.03 265);
+
   --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Light theme overrides. Default (no data-theme attribute, or explicit
+   data-theme="dark") stays dark — see @theme above. */
+:root[data-theme="light"] {
+  --color-bg: oklch(99% 0.003 265);
+  --color-bg-elev: oklch(100% 0 0);
+  --color-bg-elev-2: oklch(95.5% 0.005 265);
+  --color-bg-elev-3: oklch(91% 0.008 265);
+
+  --color-border: oklch(0% 0 0 / 0.09);
+  --color-border-strong: oklch(0% 0 0 / 0.17);
+
+  --color-text: oklch(20% 0.016 265);
+  --color-text-muted: oklch(42% 0.018 265);
+  --color-text-faint: oklch(58% 0.016 265);
 }
 
 body {

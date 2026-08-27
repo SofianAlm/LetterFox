@@ -47,7 +47,7 @@ export function SeriesDetailContent({
             onClick={() => setActiveSeason(s)}
             className={`rounded-full px-4 py-2 text-sm font-bold ${
               s === activeSeason
-                ? "bg-purple text-bg"
+                ? "bg-purple text-on-accent"
                 : "border border-border bg-bg-elev-2 text-text-muted"
             }`}
           >

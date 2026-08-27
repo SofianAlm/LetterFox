@@ -81,7 +81,7 @@ export function MyEntriesGrid({ entries }: { entries: Entry[] }) {
               type="button"
               onClick={() => setTab(t.value)}
               className={`rounded-full px-3.5 py-1.5 text-[12.5px] font-bold ${
-                tab === t.value ? "bg-accent text-bg" : "text-text-muted"
+                tab === t.value ? "bg-accent text-on-accent" : "text-text-muted"
               }`}
             >
               {t.label}
