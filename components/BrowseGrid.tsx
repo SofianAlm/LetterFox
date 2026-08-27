@@ -12,11 +12,11 @@ import { PlusIcon } from "./icons";
 
 type Profile = { id: string; display_name: string; avatar_color: string | null };
 
-const RATING_FILTERS = [
-  { value: 0, label: "Toutes les notes" },
-  { value: 8, label: "8+" },
-  { value: 6, label: "6+" },
-  { value: 4, label: "4+" },
+const SORT_OPTIONS = [
+  { value: "added", label: "Date d'ajout" },
+  { value: "alpha", label: "Alphabétique" },
+  { value: "release", label: "Date de sortie" },
+  { value: "rating", label: "Note" },
 ] as const;
 
 export function BrowseGrid({
@@ -37,7 +37,7 @@ export function BrowseGrid({
   onQuickAdd?: (summary: TitleSummary) => void;
 }) {
   const [excluded, setExcluded] = useState<Set<string>>(new Set());
-  const [minRating, setMinRating] = useState(0);
+  const [sortBy, setSortBy] = useState<(typeof SORT_OPTIONS)[number]["value"]>("added");
   const accentClass = mediaType === "movie" ? "text-blue" : "text-purple";
 
   const filtered = useMemo(
@@ -46,12 +46,14 @@ export function BrowseGrid({
   );
   const summaries = useMemo(() => summarizeByTitle(filtered), [filtered]);
   const visibleSummaries = useMemo(() => {
-    if (minRating === 0) return summaries;
-    return summaries.filter((s) => {
-      const avg = titleAverage(s);
-      return avg !== null && avg >= minRating;
-    });
-  }, [summaries, minRating]);
+    if (sortBy === "added") return summaries;
+    const arr = [...summaries];
+    if (sortBy === "alpha") arr.sort((a, b) => a.title.localeCompare(b.title, "fr"));
+    else if (sortBy === "release") arr.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
+    else if (sortBy === "rating")
+      arr.sort((a, b) => (titleAverage(b) ?? -1) - (titleAverage(a) ?? -1));
+    return arr;
+  }, [summaries, sortBy]);
 
   function toggle(id: string) {
     setExcluded((prev) => {
@@ -101,19 +103,19 @@ export function BrowseGrid({
       </div>
 
       <div className="mb-8 flex flex-wrap items-center gap-2.5 border-b border-border pb-6">
-        <span className="text-[12.5px] font-bold text-text-faint">Filtrer par note</span>
-        {RATING_FILTERS.map((f) => (
+        <span className="text-[12.5px] font-bold text-text-faint">Trier par</span>
+        {SORT_OPTIONS.map((s) => (
           <button
-            key={f.value}
+            key={s.value}
             type="button"
-            onClick={() => setMinRating(f.value)}
+            onClick={() => setSortBy(s.value)}
             className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
-              minRating === f.value
+              sortBy === s.value
                 ? `bg-accent-soft ${mediaType === "movie" ? "text-blue" : "text-purple"}`
                 : "bg-bg-elev-2 text-text-muted"
             }`}
           >
-            {f.label}
+            {s.label}
           </button>
         ))}
       </div>

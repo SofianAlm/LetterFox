@@ -28,6 +28,7 @@ export async function addWatchingSeries(
     return { error: "Impossible d'ajouter cette série." };
   }
 
+  revalidatePath("/series");
   revalidatePath("/profile/series");
   return { error: null };
 }
@@ -45,5 +46,6 @@ export async function removeFromWatching(tmdbId: number) {
     .eq("user_id", user.id)
     .eq("tmdb_id", tmdbId);
 
+  revalidatePath("/series");
   revalidatePath("/profile/series");
 }

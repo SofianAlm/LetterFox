@@ -33,9 +33,14 @@ export default async function HomePage({
 
   if (activeFilter !== "all") query = query.eq("media_type", activeFilter);
 
-  const [{ data }, admin] = await Promise.all([query, isAdmin(supabase, user?.id)]);
+  const [{ data }, admin, { data: locationRows }] = await Promise.all([
+    query,
+    isAdmin(supabase, user?.id),
+    supabase.from("locations").select("name").order("name").returns<{ name: string }[]>(),
+  ]);
   const entries = (data ?? []) as unknown as FeedEntry[];
   const groups = groupFeedEntries(entries);
+  const locations = (locationRows ?? []).map((l) => l.name);
 
   return (
     <div className="mx-auto max-w-[920px] px-6 pb-20 sm:px-10">
@@ -70,6 +75,7 @@ export default async function HomePage({
               entries={group}
               currentUserId={user?.id ?? ""}
               isAdmin={admin}
+              locations={locations}
             />
           ))}
         </div>

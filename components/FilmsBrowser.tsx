@@ -28,7 +28,7 @@ export function FilmsBrowser({
         <div>
           <h1 className="font-display text-[28px] font-bold">Films</h1>
           <p className="mt-1.5 text-sm text-text-faint">
-            {count} entrée{count > 1 ? "s" : ""} · note = moyenne des avis
+            {count} entrée{count > 1 ? "s" : ""}
           </p>
         </div>
         <button
