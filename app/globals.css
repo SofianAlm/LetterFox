@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: oklch(14% 0.014 270);
+  --color-bg-elev: oklch(18% 0.015 270);
+  --color-bg-elev-2: oklch(22% 0.016 270);
+  --color-bg-elev-3: oklch(27% 0.017 270);
+
+  --color-border: oklch(100% 0 0 / 0.08);
+  --color-border-strong: oklch(100% 0 0 / 0.16);
+
+  --color-text: oklch(95% 0.005 270);
+  --color-text-muted: oklch(72% 0.012 265);
+  --color-text-faint: oklch(54% 0.012 265);
+
+  --color-blue: oklch(70% 0.16 250);
+  --color-blue-2: oklch(61% 0.16 250);
+  --color-blue-soft: oklch(70% 0.16 250 / 0.16);
+  --color-blue-soft-strong: oklch(70% 0.16 250 / 0.34);
+
+  --color-purple: oklch(70% 0.16 292);
+  --color-purple-2: oklch(61% 0.16 292);
+  --color-purple-soft: oklch(70% 0.16 292 / 0.16);
+  --color-purple-soft-strong: oklch(70% 0.16 292 / 0.34);
+
+  /* brand default = purple */
+  --color-accent: oklch(70% 0.16 292);
+  --color-accent-2: oklch(61% 0.16 292);
+  --color-accent-soft: oklch(70% 0.16 292 / 0.16);
+  --color-accent-soft-strong: oklch(70% 0.16 292 / 0.34);
+
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+::selection {
+  background: var(--color-accent-soft-strong);
+}
