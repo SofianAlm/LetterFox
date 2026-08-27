@@ -6,6 +6,7 @@ import { formatFullDate } from "@/lib/date";
 import { posterUrl } from "@/lib/tmdb-image";
 import { PasswordForm } from "@/components/PasswordForm";
 import { ProfileEditForm } from "@/components/ProfileEditForm";
+import { MyEntriesGrid } from "@/components/MyEntriesGrid";
 import { SignOutButton } from "@/components/SignOutButton";
 import type { Tables } from "@/lib/database.types";
 
@@ -86,6 +87,15 @@ export default async function ProfilePage() {
         <div className="rounded-2xl border border-border bg-bg-elev p-7">
           <h3 className="mb-5 text-[15.5px] font-bold">Mon profil</h3>
           <ProfileEditForm displayName={displayName} avatarColor={avatarColor} />
+        </div>
+
+        <div className="rounded-2xl border border-border bg-bg-elev p-7">
+          <h3 className="mb-1 text-[15.5px] font-bold">Mes films &amp; séries</h3>
+          <p className="mb-5 text-[13px] text-text-faint">
+            Tout ce que tu as ajouté — {filmCount} film{filmCount > 1 ? "s" : ""} et {seriesCount}{" "}
+            entrée{seriesCount > 1 ? "s" : ""} de série.
+          </p>
+          <MyEntriesGrid entries={entries} />
         </div>
 
         <div className="rounded-2xl border border-border bg-bg-elev p-7">
