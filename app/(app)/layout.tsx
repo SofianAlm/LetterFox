@@ -30,7 +30,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <RefreshButton className="h-8 w-8" />
         <ThemeToggle className="h-8 w-14" />
       </div>
-      <div className="md:pl-[232px]">{children}</div>
+      <div className="pt-14 md:pl-[232px]">{children}</div>
       <MobileTabBar displayName={displayName} />
     </div>
   );

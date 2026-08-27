@@ -42,7 +42,7 @@ export function WatchlistGrid({
       <button
         type="button"
         onClick={onAdd}
-        className="fixed bottom-10 right-6 z-10 flex h-[58px] w-[58px] items-center justify-center rounded-full bg-accent text-on-accent shadow-xl sm:right-10"
+        className="fixed bottom-24 right-6 z-10 flex h-[58px] w-[58px] items-center justify-center rounded-full bg-accent text-on-accent shadow-xl md:bottom-10 sm:right-10"
         aria-label="Ajouter à voir"
       >
         <PlusIcon className="h-6 w-6" />
