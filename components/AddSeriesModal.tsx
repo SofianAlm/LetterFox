@@ -25,11 +25,23 @@ export function AddSeriesModal({
   onClose,
   locations,
   initialSelected,
+  initialWatchedOn,
+  initialLanguage,
+  initialLocation,
+  initialGranularity,
+  initialSeasonNumber,
+  initialEpisodeNumber,
   onAdded,
 }: {
   onClose: () => void;
   locations: string[];
   initialSelected?: TvResult;
+  initialWatchedOn?: string;
+  initialLanguage?: "VF" | "VO";
+  initialLocation?: string;
+  initialGranularity?: "season" | "episode";
+  initialSeasonNumber?: number;
+  initialEpisodeNumber?: number;
   onAdded?: () => void;
 }) {
   const router = useRouter();
@@ -37,13 +49,15 @@ export function AddSeriesModal({
   const [results, setResults] = useState<TvResult[]>([]);
   const [selected, setSelected] = useState<TvResult | null>(initialSelected ?? null);
   const [seasons, setSeasons] = useState<Season[]>([]);
-  const [granularity, setGranularity] = useState<"season" | "episode">("season");
+  const [granularity, setGranularity] = useState<"season" | "episode">(
+    initialGranularity ?? "season",
+  );
   const [seasonNumber, setSeasonNumber] = useState<number | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [episodeNumber, setEpisodeNumber] = useState<number | null>(null);
   const [isRewatch, setIsRewatch] = useState(false);
   const [rating, setRating] = useState(7);
-  const [language, setLanguage] = useState<"VF" | "VO">("VF");
+  const [language, setLanguage] = useState<"VF" | "VO">(initialLanguage ?? "VO");
   const [submitted, setSubmitted] = useState(false);
   const [genreMap, setGenreMap] = useState<Record<number, string>>({});
   const [state, formAction, pending] = useActionState(addSeriesEntry, initialState);
@@ -83,8 +97,16 @@ export function AddSeriesModal({
       .then((data) => {
         const list: Season[] = (data.seasons ?? []).filter((s: Season) => s.season_number > 0);
         setSeasons(list);
-        setSeasonNumber(list.at(-1)?.season_number ?? null);
+        const fallback = list.at(-1)?.season_number ?? null;
+        setSeasonNumber(
+          initialSeasonNumber != null && list.some((s) => s.season_number === initialSeasonNumber)
+            ? initialSeasonNumber
+            : fallback,
+        );
       });
+    // Only re-run when the selected title changes — initialSeasonNumber is a
+    // one-time hint from the quick-add flow, not a value to keep syncing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
 
   useEffect(() => {
@@ -97,8 +119,15 @@ export function AddSeriesModal({
       .then((data) => {
         const list: Episode[] = data.episodes ?? [];
         setEpisodes(list);
-        setEpisodeNumber(list[0]?.episode_number ?? null);
+        const fallback = list[0]?.episode_number ?? null;
+        setEpisodeNumber(
+          initialEpisodeNumber != null &&
+            list.some((e) => e.episode_number === initialEpisodeNumber)
+            ? initialEpisodeNumber
+            : fallback,
+        );
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected, seasonNumber, granularity]);
 
   useEffect(() => {
@@ -312,7 +341,7 @@ export function AddSeriesModal({
                   type="date"
                   name="watched_on"
                   required
-                  defaultValue={new Date().toISOString().slice(0, 10)}
+                  defaultValue={initialWatchedOn ?? new Date().toISOString().slice(0, 10)}
                   className="w-full rounded-[10px] border border-border-strong bg-bg-elev-2 px-3.5 py-3 text-sm focus:border-accent focus:outline-none"
                 />
               </div>
@@ -320,6 +349,7 @@ export function AddSeriesModal({
                 <label className="mb-2 block text-[13px] font-bold text-text-muted">Lieu</label>
                 <input
                   name="location"
+                  defaultValue={initialLocation ?? ""}
                   list="location-suggestions-series"
                   placeholder="Chez Camille…"
                   className="w-full rounded-[10px] border border-border-strong bg-bg-elev-2 px-3.5 py-3 text-sm focus:border-accent focus:outline-none"

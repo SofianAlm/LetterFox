@@ -23,11 +23,17 @@ export function AddFilmModal({
   onClose,
   locations,
   initialSelected,
+  initialWatchedOn,
+  initialLanguage,
+  initialLocation,
   onAdded,
 }: {
   onClose: () => void;
   locations: string[];
   initialSelected?: MovieResult;
+  initialWatchedOn?: string;
+  initialLanguage?: "VF" | "VO";
+  initialLocation?: string;
   onAdded?: () => void;
 }) {
   const router = useRouter();
@@ -36,7 +42,7 @@ export function AddFilmModal({
   const [selected, setSelected] = useState<MovieResult | null>(initialSelected ?? null);
   const [isRewatch, setIsRewatch] = useState(false);
   const [rating, setRating] = useState(7);
-  const [language, setLanguage] = useState<"VF" | "VO">("VF");
+  const [language, setLanguage] = useState<"VF" | "VO">(initialLanguage ?? "VO");
   const [submitted, setSubmitted] = useState(false);
   const [genreMap, setGenreMap] = useState<Record<number, string>>({});
   const [state, formAction, pending] = useActionState(addMovieEntry, initialState);
@@ -211,7 +217,7 @@ export function AddFilmModal({
                   type="date"
                   name="watched_on"
                   required
-                  defaultValue={new Date().toISOString().slice(0, 10)}
+                  defaultValue={initialWatchedOn ?? new Date().toISOString().slice(0, 10)}
                   className="w-full rounded-[10px] border border-border-strong bg-bg-elev-2 px-3.5 py-3 text-sm focus:border-accent focus:outline-none"
                 />
               </div>
@@ -219,6 +225,7 @@ export function AddFilmModal({
                 <label className="mb-2 block text-[13px] font-bold text-text-muted">Lieu</label>
                 <input
                   name="location"
+                  defaultValue={initialLocation ?? ""}
                   list="location-suggestions-film"
                   placeholder="Chez Sofian…"
                   className="w-full rounded-[10px] border border-border-strong bg-bg-elev-2 px-3.5 py-3 text-sm focus:border-accent focus:outline-none"

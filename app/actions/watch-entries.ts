@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/admin";
+import { getTvDetails } from "@/lib/tmdb";
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -127,8 +128,36 @@ export async function addSeriesEntry(
 
   if (error) return { error: "Impossible d'ajouter cette série." };
 
+  const tmdbId = Number(formData.get("tmdb_id"));
+  if (granularity === "episode") {
+    // Rating episode-by-episode while the show isn't over yet → auto-track
+    // it as "en cours" so it shows up in the profile's ongoing-series list.
+    const details = await getTvDetails(tmdbId).catch(() => null);
+    if (details?.in_production) {
+      await supabase.from("series_progress").upsert(
+        {
+          user_id: user.id,
+          tmdb_id: tmdbId,
+          title: String(formData.get("title")),
+          poster_path: (formData.get("poster_path") as string) || null,
+          release_year: formData.get("release_year") ? Number(formData.get("release_year")) : null,
+        },
+        { onConflict: "user_id,tmdb_id" },
+      );
+    }
+  } else {
+    // A season-level rating is "noter la série" — it graduates the show out
+    // of "en cours" (whether or not it was tracked there in the first place).
+    await supabase
+      .from("series_progress")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("tmdb_id", tmdbId);
+  }
+
   revalidatePath("/series");
   revalidatePath("/");
+  revalidatePath("/profile/series");
   return { error: null };
 }
 

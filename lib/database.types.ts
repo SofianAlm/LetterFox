@@ -106,6 +106,44 @@ export type Database = {
           },
         ]
       }
+      series_progress: {
+        Row: {
+          created_at: string
+          id: string
+          poster_path: string | null
+          release_year: number | null
+          title: string
+          tmdb_id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          poster_path?: string | null
+          release_year?: number | null
+          title: string
+          tmdb_id: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          poster_path?: string | null
+          release_year?: number | null
+          title?: string
+          tmdb_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "series_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       watch_entries: {
         Row: {
           comment: string | null
