@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { posterUrl } from "@/lib/tmdb-image";
 import { initials, avatarColor } from "@/lib/avatar-color";
@@ -41,7 +42,9 @@ export function SeriesWatchingGrid({
 }) {
   const [open, setOpen] = useState(false);
   const [finishing, setFinishing] = useState<Item | null>(null);
-  const [excluded, setExcluded] = useState<Set<string>>(new Set());
+  const [excluded, setExcluded] = useState<Set<string>>(
+    () => new Set(profiles.filter((p) => p.id !== currentUserId).map((p) => p.id)),
+  );
   const [isPending, startTransition] = useTransition();
 
   const items = useMemo<Item[]>(() => {
@@ -149,7 +152,7 @@ export function SeriesWatchingGrid({
             const owner = profiles.find((p) => p.id === item.userId);
             const mine = item.userId === currentUserId;
             return (
-              <div key={item.key}>
+              <Link key={item.key} href={`/series/${item.tmdbId}`} className="block">
                 <div className="relative aspect-[2/3] overflow-hidden rounded-[10px] bg-bg-elev-2 shadow-lg">
                   {poster && (
                     <Image src={poster} alt="" fill sizes="200px" className="object-cover" />
@@ -172,7 +175,11 @@ export function SeriesWatchingGrid({
                     <button
                       type="button"
                       disabled={isPending}
-                      onClick={() => setFinishing(item)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setFinishing(item);
+                      }}
                       aria-label="Marquer cette saison"
                       className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur hover:bg-emerald-500"
                     >
@@ -183,7 +190,11 @@ export function SeriesWatchingGrid({
                     <button
                       type="button"
                       disabled={isPending}
-                      onClick={() => startTransition(() => removeFromWatching(item.tmdbId))}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        startTransition(() => removeFromWatching(item.tmdbId));
+                      }}
                       aria-label="Retirer des séries en cours"
                       className="absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur hover:text-red-400"
                     >
@@ -191,7 +202,7 @@ export function SeriesWatchingGrid({
                     </button>
                   )}
                 </div>
-                <h3 className="mt-2.5 line-clamp-2 text-sm font-bold leading-tight">
+                <h3 className="mt-2.5 line-clamp-2 text-sm font-bold leading-tight hover:underline">
                   {item.title}
                   {item.seasonNumber !== null && (
                     <span className="text-text-faint"> — Saison {item.seasonNumber}</span>
@@ -200,7 +211,7 @@ export function SeriesWatchingGrid({
                 {item.releaseYear && (
                   <p className="mt-1 text-[12.5px] text-text-faint">{item.releaseYear}</p>
                 )}
-              </div>
+              </Link>
             );
           })}
         </div>
