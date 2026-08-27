@@ -130,7 +130,9 @@ export function MobileMenu({
 
             <footer className="site-footer mt-4 px-2">
               © {new Date().getFullYear()} · made by{" "}
-              <span className="footer-brand">Skalrow</span>
+              <a href="https://skalrow.fr" className="footer-brand">
+                Skalrow
+              </a>
             </footer>
           </aside>
         </div>

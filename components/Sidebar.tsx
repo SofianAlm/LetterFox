@@ -86,7 +86,10 @@ export function Sidebar({
       )}
 
       <footer className="site-footer mt-4 px-2">
-        © {new Date().getFullYear()} · made by <span className="footer-brand">Skalrow</span>
+        © {new Date().getFullYear()} · made by{" "}
+        <a href="https://skalrow.fr" className="footer-brand">
+          Skalrow
+        </a>
       </footer>
     </aside>
   );
