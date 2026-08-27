@@ -93,7 +93,7 @@ export function EpisodeRow({
                     </p>
                   )
                 )}
-                <div className="mt-2 flex items-center gap-2">
+                <div className="mt-2 flex flex-wrap items-center gap-2">
                   <ReactionBar entryId={e.id} reactions={e.reactions} currentUserId={currentUserId} />
                   <EntryActions entry={e} currentUserId={currentUserId} isAdmin={isAdmin} path={path} />
                 </div>

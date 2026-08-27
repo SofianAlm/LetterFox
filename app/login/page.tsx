@@ -27,7 +27,7 @@ export default function LoginPage() {
         <div className="relative text-sm text-text-faint">© 2026 LetterFox — accès privé</div>
       </div>
 
-      <div className="flex flex-1 items-center justify-center p-10">
+      <div className="flex flex-1 items-center justify-center p-6 sm:p-10">
         <div className="w-full max-w-sm">
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
             <span className="text-xl leading-none">🎬</span>

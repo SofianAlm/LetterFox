@@ -65,9 +65,14 @@
   --color-bg-elev-3: oklch(37% 0.048 297);
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   background: var(--color-bg);
   color: var(--color-text);
+  overflow-x: hidden;
 }
 
 ::selection {

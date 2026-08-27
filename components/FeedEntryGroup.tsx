@@ -78,7 +78,7 @@ export function FeedEntryGroup({
         )
       )}
 
-      <div className="mt-4 flex items-center gap-3">
+      <div className="mt-4 flex flex-wrap items-center gap-3">
         <div
           className="flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-full font-display text-[11px] font-extrabold text-[oklch(20%_0.03_0)]"
           style={{
@@ -119,15 +119,17 @@ export function FeedEntryGroup({
   );
 
   return (
-    <div className="flex gap-7 border-b border-border py-[30px] last:border-none">
-      <div className="w-16 flex-shrink-0 pt-1 text-right">
-        <div className="font-display text-[26px] font-extrabold leading-none">{day}</div>
-        <div className="mt-[3px] text-[11px] font-bold uppercase tracking-wide text-text-faint">
+    <div className="flex gap-4 border-b border-border py-[30px] last:border-none sm:gap-7">
+      <div className="w-11 flex-shrink-0 pt-1 text-right sm:w-16">
+        <div className="font-display text-[20px] font-extrabold leading-none sm:text-[26px]">
+          {day}
+        </div>
+        <div className="mt-[3px] text-[9.5px] font-bold uppercase tracking-wide text-text-faint sm:text-[11px]">
           {month}
         </div>
       </div>
       <div className="min-w-0 flex-1">
-        <div className="flex gap-5">
+        <div className="flex gap-3 sm:gap-5">
           <Link href={detailHref} className="flex-shrink-0">
             {poster ? (
               <Image
@@ -135,10 +137,10 @@ export function FeedEntryGroup({
                 alt=""
                 width={104}
                 height={156}
-                className="h-[156px] w-[104px] rounded-[10px] object-cover shadow-lg"
+                className="h-[114px] w-[76px] rounded-[10px] object-cover shadow-lg sm:h-[156px] sm:w-[104px]"
               />
             ) : (
-              <div className="h-[156px] w-[104px] rounded-[10px] bg-bg-elev-2" />
+              <div className="h-[114px] w-[76px] rounded-[10px] bg-bg-elev-2 sm:h-[156px] sm:w-[104px]" />
             )}
           </Link>
           <div className="min-w-0 flex-1">
