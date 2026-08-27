@@ -49,18 +49,21 @@ export type Database = {
           created_at: string
           display_name: string
           id: string
+          is_admin: boolean
         }
         Insert: {
           avatar_color?: string | null
           created_at?: string
           display_name: string
           id: string
+          is_admin?: boolean
         }
         Update: {
           avatar_color?: string | null
           created_at?: string
           display_name?: string
           id?: string
+          is_admin?: boolean
         }
         Relationships: []
       }
