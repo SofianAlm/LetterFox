@@ -2,24 +2,34 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FoxLogo } from "./FoxLogo";
-import { HomeIcon, FilmIcon, TvIcon, LogInIcon } from "./icons";
-import { initials, avatarColor } from "@/lib/avatar-color";
+import { HomeIcon, FilmIcon, TvIcon, BookmarkIcon, LogInIcon } from "./icons";
+import { initials, avatarColor as hashAvatarColor } from "@/lib/avatar-color";
+import { VERSION } from "@/lib/version";
 
 const LINKS = [
   { href: "/", label: "Accueil", icon: HomeIcon },
   { href: "/films", label: "Films", icon: FilmIcon },
   { href: "/series", label: "Séries", icon: TvIcon },
+  { href: "/watchlist", label: "À voir", icon: BookmarkIcon },
 ];
 
-export function Sidebar({ displayName }: { displayName: string | null }) {
+export function Sidebar({
+  displayName,
+  avatarColor,
+}: {
+  displayName: string | null;
+  avatarColor: string | null;
+}) {
   const pathname = usePathname();
 
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-[232px] flex-col border-r border-border bg-bg px-4 py-6 md:flex">
       <Link href="/" className="flex items-center gap-2.5 px-2">
-        <FoxLogo className="h-7 w-7 flex-shrink-0" />
+        <span className="text-xl leading-none">🦊</span>
         <span className="font-display text-[17px] font-extrabold tracking-tight">LetterFox</span>
+        <span className="ml-auto rounded-full bg-bg-elev-2 px-2 py-0.5 text-[10px] font-bold text-text-faint">
+          {VERSION}
+        </span>
       </Link>
 
       <nav className="mt-8 flex flex-col gap-1">
@@ -56,7 +66,7 @@ export function Sidebar({ displayName }: { displayName: string | null }) {
         >
           <span
             className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full font-display text-[11px] font-extrabold text-[oklch(20%_0.03_0)]"
-            style={{ background: avatarColor(displayName) }}
+            style={{ background: avatarColor ?? hashAvatarColor(displayName) }}
           >
             {initials(displayName)}
           </span>
@@ -71,6 +81,13 @@ export function Sidebar({ displayName }: { displayName: string | null }) {
           Se connecter
         </Link>
       )}
+
+      <a
+        href="https://skalrow.fr"
+        className="mt-4 flex items-center gap-1.5 px-2 text-[12.5px] font-semibold text-text-faint hover:text-text-muted"
+      >
+        ← Retour à skalrow.fr
+      </a>
     </aside>
   );
 }

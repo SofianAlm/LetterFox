@@ -10,7 +10,7 @@ import { formatRating } from "@/lib/ratings";
 import type { FeedEntry } from "@/lib/feed";
 import { PlusIcon } from "./icons";
 
-type Profile = { id: string; display_name: string };
+type Profile = { id: string; display_name: string; avatar_color: string | null };
 
 export function BrowseGrid({
   entries,
@@ -71,7 +71,7 @@ export function BrowseGrid({
             >
               <span
                 className="flex h-[22px] w-[22px] items-center justify-center rounded-full font-display text-[9.5px] font-extrabold text-[oklch(20%_0.03_0)]"
-                style={{ background: avatarColor(p.display_name) }}
+                style={{ background: p.avatar_color ?? avatarColor(p.display_name) }}
               >
                 {initials(p.display_name)}
               </span>

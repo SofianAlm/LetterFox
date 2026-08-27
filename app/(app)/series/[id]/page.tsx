@@ -23,7 +23,7 @@ export default async function SeriesDetailPage({ params }: { params: Promise<{ i
     supabase.auth.getUser(),
     supabase
       .from("watch_entries")
-      .select("*, profiles(display_name), locations(name), reactions(emoji, user_id)")
+      .select("*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id)")
       .eq("media_type", "tv")
       .eq("tmdb_id", tmdbId)
       .order("watched_on", { ascending: false }),

@@ -118,3 +118,57 @@ export async function addSeriesEntry(
   revalidatePath("/");
   return { error: null };
 }
+
+export async function updateEntry(
+  _prev: AddEntryState,
+  formData: FormData,
+): Promise<AddEntryState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Non connecté." };
+
+  const entryId = String(formData.get("entry_id") ?? "");
+  const isRewatch = formData.get("is_rewatch") === "on";
+  const language = formData.get("language") === "VO" ? "VO" : "VF";
+  const locationId = await resolveLocationId(
+    supabase,
+    String(formData.get("location") ?? ""),
+    user.id,
+  );
+
+  const { error } = await supabase
+    .from("watch_entries")
+    .update({
+      watched_on: String(formData.get("watched_on")),
+      location_id: locationId,
+      language,
+      rating: isRewatch ? null : Number(formData.get("rating")),
+      comment: isRewatch ? null : String(formData.get("comment") ?? "").trim() || null,
+      is_rewatch: isRewatch,
+    })
+    .eq("id", entryId)
+    .eq("user_id", user.id);
+
+  if (error) return { error: "Impossible de modifier cet avis." };
+
+  revalidatePath("/films/[id]", "page");
+  revalidatePath("/series/[id]", "page");
+  revalidatePath("/");
+  revalidatePath("/profile");
+  return { error: null };
+}
+
+export async function deleteEntry(entryId: string, path: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase.from("watch_entries").delete().eq("id", entryId).eq("user_id", user.id);
+  revalidatePath(path);
+  revalidatePath("/");
+  revalidatePath("/profile");
+}

@@ -10,14 +10,17 @@ export function ReactionBar({
   entryId,
   reactions,
   currentUserId,
+  size = "md",
 }: {
   entryId: string;
   reactions: { emoji: string; user_id: string }[];
   currentUserId: string;
+  size?: "md" | "lg";
 }) {
   const pathname = usePathname();
   const [pending, startTransition] = useTransition();
   const [pickerOpen, setPickerOpen] = useState(false);
+  const lg = size === "lg";
 
   const counts = new Map<string, { count: number; mine: boolean }>();
   for (const r of reactions) {
@@ -40,7 +43,9 @@ export function ReactionBar({
         {[...counts.entries()].map(([emoji, { count }]) => (
           <span
             key={emoji}
-            className="flex items-center gap-1.5 rounded-full border border-border bg-bg-elev-2 px-2.5 py-1 text-[13px] text-text-muted"
+            className={`flex items-center gap-1.5 rounded-full border border-border bg-bg-elev-2 text-text-muted ${
+              lg ? "px-3 py-1.5 text-[15px]" : "px-2.5 py-1 text-[13px]"
+            }`}
           >
             <span>{emoji}</span>
             <span>{count}</span>
@@ -58,7 +63,9 @@ export function ReactionBar({
           type="button"
           disabled={pending}
           onClick={() => react(emoji as ReactionEmoji)}
-          className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[13px] ${
+          className={`flex items-center gap-1.5 rounded-full border font-bold ${
+            lg ? "px-3 py-1.5 text-[15px]" : "px-2.5 py-1 text-[13px]"
+          } ${
             mine
               ? "border-accent-soft-strong bg-accent-soft text-accent"
               : "border-border bg-bg-elev-2 text-text-muted"
@@ -73,10 +80,12 @@ export function ReactionBar({
         <button
           type="button"
           onClick={() => setPickerOpen((v) => !v)}
-          className="flex h-[30px] w-[30px] items-center justify-center rounded-full border border-dashed border-border-strong text-text-faint"
+          className={`flex items-center justify-center rounded-full border border-dashed border-border-strong text-text-faint ${
+            lg ? "h-9 w-9" : "h-[30px] w-[30px]"
+          }`}
           aria-label="Ajouter une réaction"
         >
-          <PlusIcon className="h-3.5 w-3.5" />
+          <PlusIcon className={lg ? "h-4 w-4" : "h-3.5 w-3.5"} />
         </button>
         {pickerOpen && (
           <div className="absolute bottom-full right-0 z-10 mb-2 flex gap-1 rounded-full border border-border-strong bg-bg-elev-2 p-1.5 shadow-lg">

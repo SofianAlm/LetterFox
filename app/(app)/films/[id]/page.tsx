@@ -8,6 +8,7 @@ import { movieAverage, formatRating } from "@/lib/ratings";
 import { initials, avatarColor } from "@/lib/avatar-color";
 import { formatFullDate } from "@/lib/date";
 import { ReactionBar } from "@/components/ReactionBar";
+import { EntryActions } from "@/components/EntryActions";
 import { ChevronLeftIcon } from "@/components/icons";
 import type { FeedEntry } from "@/lib/feed";
 
@@ -25,7 +26,7 @@ export default async function FilmDetailPage({ params }: { params: Promise<{ id:
     supabase.auth.getUser(),
     supabase
       .from("watch_entries")
-      .select("*, profiles(display_name), locations(name), reactions(emoji, user_id)")
+      .select("*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id)")
       .eq("media_type", "movie")
       .eq("tmdb_id", tmdbId)
       .order("watched_on", { ascending: false }),
@@ -113,7 +114,10 @@ export default async function FilmDetailPage({ params }: { params: Promise<{ id:
             <div key={entry.id} className="flex gap-4 border-b border-border py-5 last:border-none">
               <div
                 className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full font-display text-sm font-extrabold text-[oklch(20%_0.03_0)]"
-                style={{ background: avatarColor(entry.profiles?.display_name ?? "?") }}
+                style={{
+                  background:
+                    entry.profiles?.avatar_color ?? avatarColor(entry.profiles?.display_name ?? "?"),
+                }}
               >
                 {initials(entry.profiles?.display_name ?? "?")}
               </div>
@@ -143,12 +147,19 @@ export default async function FilmDetailPage({ params }: { params: Promise<{ id:
                     </p>
                   )
                 )}
-                <div className="mt-3">
+                <div className="mt-3 flex items-center gap-2">
                   <ReactionBar
                     entryId={entry.id}
                     reactions={entry.reactions}
                     currentUserId={user?.id ?? ""}
                   />
+                  {user && (
+                    <EntryActions
+                      entry={entry}
+                      currentUserId={user.id}
+                      path={`/films/${tmdbId}`}
+                    />
+                  )}
                 </div>
               </div>
             </div>

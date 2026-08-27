@@ -12,7 +12,7 @@ export function SeriesBrowser({
   locations,
 }: {
   entries: FeedEntry[];
-  profiles: { id: string; display_name: string }[];
+  profiles: { id: string; display_name: string; avatar_color: string | null }[];
   locations: string[];
 }) {
   const [open, setOpen] = useState(false);
