@@ -17,22 +17,59 @@ export async function addWatchlistItem(
 
   const mediaType = formData.get("media_type") === "tv" ? "tv" : "movie";
 
-  const { error } = await supabase.from("watchlist_items").insert({
-    media_type: mediaType,
-    tmdb_id: Number(formData.get("tmdb_id")),
-    title: String(formData.get("title")),
-    poster_path: (formData.get("poster_path") as string) || null,
-    release_year: formData.get("release_year") ? Number(formData.get("release_year")) : null,
-    added_by: user.id,
-  });
+  let genres: string[] = [];
+  try {
+    const parsed = JSON.parse(String(formData.get("genres") ?? "[]"));
+    if (Array.isArray(parsed)) genres = parsed.filter((g): g is string => typeof g === "string");
+  } catch {
+    genres = [];
+  }
+
+  const { data: inserted, error } = await supabase
+    .from("watchlist_items")
+    .insert({
+      media_type: mediaType,
+      tmdb_id: Number(formData.get("tmdb_id")),
+      title: String(formData.get("title")),
+      poster_path: (formData.get("poster_path") as string) || null,
+      release_year: formData.get("release_year") ? Number(formData.get("release_year")) : null,
+      genres,
+      added_by: user.id,
+    })
+    .select("id")
+    .returns<{ id: string }[]>();
 
   if (error) {
     if (error.code === "23505") return { error: "Déjà dans la liste à voir." };
     return { error: "Impossible d'ajouter cet élément." };
   }
 
+  if (inserted?.[0]) {
+    await supabase.from("watchlist_wants").insert({ item_id: inserted[0].id, profile_id: user.id });
+  }
+
   revalidatePath("/watchlist");
   return { error: null };
+}
+
+export async function toggleWant(itemId: string, currentlyWanted: boolean) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  if (currentlyWanted) {
+    await supabase
+      .from("watchlist_wants")
+      .delete()
+      .eq("item_id", itemId)
+      .eq("profile_id", user.id);
+  } else {
+    await supabase.from("watchlist_wants").insert({ item_id: itemId, profile_id: user.id });
+  }
+
+  revalidatePath("/watchlist");
 }
 
 export async function markWatchlistItemWatched(itemId: string) {

@@ -119,7 +119,7 @@ export function BrowseGrid({
       <button
         type="button"
         onClick={onAdd}
-        className={`fixed bottom-10 right-6 z-10 flex h-[58px] w-[58px] items-center justify-center rounded-full text-bg shadow-xl sm:right-10 ${
+        className={`fixed bottom-10 right-6 z-10 flex h-[58px] w-[58px] items-center justify-center rounded-full text-on-accent shadow-xl sm:right-10 ${
           mediaType === "movie" ? "bg-blue" : "bg-purple"
         }`}
         aria-label={mediaType === "movie" ? "Ajouter un film" : "Ajouter une série"}

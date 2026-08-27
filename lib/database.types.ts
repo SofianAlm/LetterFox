@@ -188,6 +188,7 @@ export type Database = {
         Row: {
           added_by: string
           created_at: string
+          genres: string[]
           id: string
           media_type: string
           poster_path: string | null
@@ -201,6 +202,7 @@ export type Database = {
         Insert: {
           added_by: string
           created_at?: string
+          genres?: string[]
           id?: string
           media_type: string
           poster_path?: string | null
@@ -214,6 +216,7 @@ export type Database = {
         Update: {
           added_by?: string
           created_at?: string
+          genres?: string[]
           id?: string
           media_type?: string
           poster_path?: string | null
@@ -235,6 +238,39 @@ export type Database = {
           {
             foreignKeyName: "watchlist_items_watched_by_fkey"
             columns: ["watched_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      watchlist_wants: {
+        Row: {
+          created_at: string
+          item_id: string
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          item_id: string
+          profile_id: string
+        }
+        Update: {
+          created_at?: string
+          item_id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watchlist_wants_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "watchlist_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watchlist_wants_profile_id_fkey"
+            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]

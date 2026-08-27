@@ -45,7 +45,7 @@ export default async function HomePage({
               key={f.value}
               href={f.value === "all" ? "/" : `/?type=${f.value}`}
               className={`rounded-full px-4 py-2 text-[13px] font-bold ${
-                activeFilter === f.value ? "bg-accent text-bg" : "text-text-muted"
+                activeFilter === f.value ? "bg-accent text-on-accent" : "text-text-muted"
               }`}
             >
               {f.label}

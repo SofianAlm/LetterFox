@@ -30,7 +30,7 @@ export function FilmsBrowser({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex items-center gap-2 rounded-[10px] bg-blue px-4 py-2.5 text-[13.5px] font-bold text-bg"
+          className="flex items-center gap-2 rounded-[10px] bg-blue px-4 py-2.5 text-[13.5px] font-bold text-on-accent"
         >
           <PlusIcon className="h-4 w-4" />
           Ajouter un film

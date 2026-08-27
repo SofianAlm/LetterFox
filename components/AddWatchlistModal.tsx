@@ -15,7 +15,10 @@ type Result = {
   release_date?: string | null;
   first_air_date?: string | null;
   poster_path: string | null;
+  genre_ids?: number[];
 };
+
+type GenreMap = Record<number, string>;
 
 const initialState: AddWatchlistState = { error: null };
 
@@ -26,7 +29,22 @@ export function AddWatchlistModal({ onClose }: { onClose: () => void }) {
   const [results, setResults] = useState<Result[]>([]);
   const [selected, setSelected] = useState<Result | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [genreMaps, setGenreMaps] = useState<{ movie: GenreMap; tv: GenreMap }>({
+    movie: {},
+    tv: {},
+  });
   const [state, formAction, pending] = useActionState(addWatchlistItem, initialState);
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/tmdb/genres?type=movie").then((res) => res.json()),
+      fetch("/api/tmdb/genres?type=tv").then((res) => res.json()),
+    ]).then(([movie, tv]) => {
+      const toMap = (list: { id: number; name: string }[]) =>
+        Object.fromEntries(list.map((g) => [g.id, g.name]));
+      setGenreMaps({ movie: toMap(movie.genres ?? []), tv: toMap(tv.genres ?? []) });
+    });
+  }, []);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -51,6 +69,8 @@ export function AddWatchlistModal({ onClose }: { onClose: () => void }) {
 
   const label = (r: Result) => r.title ?? r.name ?? "";
   const year = (r: Result) => (r.release_date ?? r.first_air_date)?.slice(0, 4) ?? "—";
+  const genreNames = (r: Result) =>
+    (r.genre_ids ?? []).map((id) => genreMaps[mediaType][id]).filter((n): n is string => !!n);
 
   return (
     <Modal title="Ajouter à voir" onClose={onClose}>
@@ -79,7 +99,7 @@ export function AddWatchlistModal({ onClose }: { onClose: () => void }) {
                   }}
                   className={`flex-1 rounded-[8px] py-2 text-[13.5px] font-bold ${
                     mediaType === value
-                      ? `${value === "movie" ? "bg-blue" : "bg-purple"} text-bg`
+                      ? `${value === "movie" ? "bg-blue" : "bg-purple"} text-on-accent`
                       : "text-text-muted"
                   }`}
                 >
@@ -137,6 +157,7 @@ export function AddWatchlistModal({ onClose }: { onClose: () => void }) {
             <input type="hidden" name="title" value={label(selected)} />
             <input type="hidden" name="poster_path" value={selected.poster_path ?? ""} />
             <input type="hidden" name="release_year" value={year(selected)} />
+            <input type="hidden" name="genres" value={JSON.stringify(genreNames(selected))} />
 
             <div
               className={`flex items-center gap-3 rounded-xl border p-2.5 ${
@@ -169,6 +190,19 @@ export function AddWatchlistModal({ onClose }: { onClose: () => void }) {
               </button>
             </div>
 
+            {genreNames(selected).length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {genreNames(selected).map((g) => (
+                  <span
+                    key={g}
+                    className="rounded-full bg-bg-elev-2 px-2.5 py-1 text-[11px] font-semibold text-text-muted"
+                  >
+                    {g}
+                  </span>
+                ))}
+              </div>
+            )}
+
             {state.error && <p className="mt-3 text-sm text-red-400">{state.error}</p>}
 
             <div className="mt-6 flex justify-end gap-2.5">
@@ -182,7 +216,7 @@ export function AddWatchlistModal({ onClose }: { onClose: () => void }) {
               <button
                 type="submit"
                 disabled={pending}
-                className="rounded-[10px] bg-accent px-5 py-3 text-sm font-bold text-bg disabled:opacity-60"
+                className="rounded-[10px] bg-accent px-5 py-3 text-sm font-bold text-on-accent disabled:opacity-60"
               >
                 {pending ? "Ajout…" : "Ajouter à la liste"}
               </button>

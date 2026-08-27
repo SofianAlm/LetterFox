@@ -62,7 +62,7 @@ export function EditEntryModal({ entry, onClose }: { entry: FeedEntry; onClose: 
                 onClick={() => setLanguage(l)}
                 className={`flex-1 rounded-[8px] py-2 text-[13.5px] font-bold ${
                   language === l
-                    ? `${accent === "blue" ? "bg-blue" : "bg-purple"} text-bg`
+                    ? `${accent === "blue" ? "bg-blue" : "bg-purple"} text-on-accent`
                     : "text-text-muted"
                 }`}
               >
@@ -141,7 +141,7 @@ export function EditEntryModal({ entry, onClose }: { entry: FeedEntry; onClose: 
             disabled={pending}
             className={`rounded-[10px] ${
               accent === "blue" ? "bg-blue" : "bg-purple"
-            } px-5 py-3 text-sm font-bold text-bg disabled:opacity-60`}
+            } px-5 py-3 text-sm font-bold text-on-accent disabled:opacity-60`}
           >
             {pending ? "Enregistrement…" : "Enregistrer"}
           </button>
