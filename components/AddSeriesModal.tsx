@@ -13,6 +13,8 @@ type TvResult = {
   name: string;
   first_air_date: string | null;
   poster_path: string | null;
+  genre_ids?: number[];
+  genres?: string[];
 };
 type Season = { season_number: number; name: string; episode_count: number };
 type Episode = { episode_number: number; name: string };
@@ -43,7 +45,17 @@ export function AddSeriesModal({
   const [rating, setRating] = useState(7);
   const [language, setLanguage] = useState<"VF" | "VO">("VF");
   const [submitted, setSubmitted] = useState(false);
+  const [genreMap, setGenreMap] = useState<Record<number, string>>({});
   const [state, formAction, pending] = useActionState(addSeriesEntry, initialState);
+
+  useEffect(() => {
+    fetch("/api/tmdb/genres?type=tv")
+      .then((res) => res.json())
+      .then((data) => {
+        const list: { id: number; name: string }[] = data.genres ?? [];
+        setGenreMap(Object.fromEntries(list.map((g) => [g.id, g.name])));
+      });
+  }, []);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -57,6 +69,9 @@ export function AddSeriesModal({
     }, 300);
     return () => clearTimeout(timeout);
   }, [query]);
+
+  const genreNames = (r: TvResult) =>
+    r.genres ?? (r.genre_ids ?? []).map((id) => genreMap[id]).filter((n): n is string => !!n);
 
   useEffect(() => {
     if (!selected) return;
@@ -158,6 +173,7 @@ export function AddSeriesModal({
               name="release_year"
               value={selected.first_air_date?.slice(0, 4) ?? ""}
             />
+            <input type="hidden" name="genres" value={JSON.stringify(genreNames(selected))} />
             <input type="hidden" name="granularity" value={granularity} />
             <input type="hidden" name="season_number" value={seasonNumber ?? ""} />
             {granularity === "episode" && (

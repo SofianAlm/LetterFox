@@ -7,6 +7,7 @@ import { posterUrl } from "@/lib/tmdb-image";
 import { seriesAverage, formatRating } from "@/lib/ratings";
 import { ChevronLeftIcon } from "@/components/icons";
 import { SeriesDetailContent } from "@/components/SeriesDetailContent";
+import { MediaBackground } from "@/components/MediaBackground";
 import type { FeedEntry } from "@/lib/feed";
 
 export default async function SeriesDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -40,6 +41,7 @@ export default async function SeriesDetailPage({ params }: { params: Promise<{ i
 
   return (
     <div className="mx-auto max-w-[1120px] px-6 pb-24 pt-8 sm:px-10">
+      <MediaBackground media="tv" />
       <Link
         href="/series"
         className="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-text-muted"

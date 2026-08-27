@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import type { FeedEntry } from "@/lib/feed";
 import { formatDayMonth } from "@/lib/date";
@@ -30,6 +31,7 @@ export function FeedEntryGroup({
   const { day, month } = formatDayMonth(head.watched_on);
   const isFilm = head.media_type === "movie";
   const poster = posterUrl(head.poster_path, "w154");
+  const detailHref = `${isFilm ? "/films" : "/series"}/${head.tmdb_id}`;
 
   const review = (
     <>
@@ -124,17 +126,19 @@ export function FeedEntryGroup({
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex gap-5">
-          {poster ? (
-            <Image
-              src={poster}
-              alt=""
-              width={104}
-              height={156}
-              className="h-[156px] w-[104px] flex-shrink-0 rounded-[10px] object-cover shadow-lg"
-            />
-          ) : (
-            <div className="h-[156px] w-[104px] flex-shrink-0 rounded-[10px] bg-bg-elev-2" />
-          )}
+          <Link href={detailHref} className="flex-shrink-0">
+            {poster ? (
+              <Image
+                src={poster}
+                alt=""
+                width={104}
+                height={156}
+                className="h-[156px] w-[104px] rounded-[10px] object-cover shadow-lg"
+              />
+            ) : (
+              <div className="h-[156px] w-[104px] rounded-[10px] bg-bg-elev-2" />
+            )}
+          </Link>
           <div className="min-w-0 flex-1">
             <div
               className={`text-[11px] font-extrabold uppercase tracking-wide ${
@@ -143,7 +147,14 @@ export function FeedEntryGroup({
             >
               {typeLabel(head)}
             </div>
-            <h3 className="mt-1 font-display text-[19px] font-bold">{head.title}</h3>
+            <Link href={detailHref} className="block">
+              <h3 className="mt-1 font-display text-[19px] font-bold hover:underline">
+                {head.title}
+              </h3>
+            </Link>
+            {head.genres.length > 0 && (
+              <p className="mt-0.5 text-[12px] text-text-faint">{head.genres.join(" · ")}</p>
+            )}
 
             {entries.length > 1 ? (
               <div className="mt-4 rounded-xl border border-border bg-bg-elev p-5">{review}</div>

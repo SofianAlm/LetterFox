@@ -112,6 +112,7 @@ export type Database = {
           created_at: string
           episode_name: string | null
           episode_number: number | null
+          genres: string[]
           granularity: string
           id: string
           is_rewatch: boolean
@@ -132,6 +133,7 @@ export type Database = {
           created_at?: string
           episode_name?: string | null
           episode_number?: number | null
+          genres?: string[]
           granularity: string
           id?: string
           is_rewatch?: boolean
@@ -152,6 +154,7 @@ export type Database = {
           created_at?: string
           episode_name?: string | null
           episode_number?: number | null
+          genres?: string[]
           granularity?: string
           id?: string
           is_rewatch?: boolean

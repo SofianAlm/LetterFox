@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { FilmsBrowser } from "@/components/FilmsBrowser";
+import { MediaBackground } from "@/components/MediaBackground";
 import type { FeedEntry } from "@/lib/feed";
 
 export default async function FilmsPage() {
@@ -22,6 +23,7 @@ export default async function FilmsPage() {
 
   return (
     <div className="mx-auto max-w-[1240px] px-6 pb-24 pt-10 sm:px-10">
+      <MediaBackground media="movie" />
       <FilmsBrowser
         entries={(entries ?? []) as unknown as FeedEntry[]}
         profiles={profiles ?? []}

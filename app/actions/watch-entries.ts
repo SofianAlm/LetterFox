@@ -30,6 +30,16 @@ async function resolveLocationId(
   return createdRows![0].id;
 }
 
+function parseGenres(formData: FormData): string[] {
+  try {
+    const parsed = JSON.parse(String(formData.get("genres") ?? "[]"));
+    if (Array.isArray(parsed)) return parsed.filter((g): g is string => typeof g === "string");
+  } catch {
+    // ignore malformed input, fall through to empty
+  }
+  return [];
+}
+
 export type AddEntryState = { error: string | null };
 
 export async function addMovieEntry(
@@ -58,6 +68,7 @@ export async function addMovieEntry(
     title: String(formData.get("title")),
     poster_path: (formData.get("poster_path") as string) || null,
     release_year: formData.get("release_year") ? Number(formData.get("release_year")) : null,
+    genres: parseGenres(formData),
     watched_on: String(formData.get("watched_on")),
     location_id: locationId,
     language,
@@ -100,6 +111,7 @@ export async function addSeriesEntry(
     title: String(formData.get("title")),
     poster_path: (formData.get("poster_path") as string) || null,
     release_year: formData.get("release_year") ? Number(formData.get("release_year")) : null,
+    genres: parseGenres(formData),
     season_number: Number(formData.get("season_number")),
     episode_number: granularity === "episode" ? Number(formData.get("episode_number")) : null,
     episode_name:

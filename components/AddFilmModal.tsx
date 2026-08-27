@@ -13,6 +13,8 @@ type MovieResult = {
   title: string;
   release_date: string | null;
   poster_path: string | null;
+  genre_ids?: number[];
+  genres?: string[];
 };
 
 const initialState: AddEntryState = { error: null };
@@ -36,7 +38,17 @@ export function AddFilmModal({
   const [rating, setRating] = useState(7);
   const [language, setLanguage] = useState<"VF" | "VO">("VF");
   const [submitted, setSubmitted] = useState(false);
+  const [genreMap, setGenreMap] = useState<Record<number, string>>({});
   const [state, formAction, pending] = useActionState(addMovieEntry, initialState);
+
+  useEffect(() => {
+    fetch("/api/tmdb/genres?type=movie")
+      .then((res) => res.json())
+      .then((data) => {
+        const list: { id: number; name: string }[] = data.genres ?? [];
+        setGenreMap(Object.fromEntries(list.map((g) => [g.id, g.name])));
+      });
+  }, []);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -50,6 +62,9 @@ export function AddFilmModal({
     }, 300);
     return () => clearTimeout(timeout);
   }, [query]);
+
+  const genreNames = (r: MovieResult) =>
+    r.genres ?? (r.genre_ids ?? []).map((id) => genreMap[id]).filter((n): n is string => !!n);
 
   useEffect(() => {
     if (submitted && !pending && state.error === null) {
@@ -124,6 +139,7 @@ export function AddFilmModal({
               name="release_year"
               value={selected.release_date?.slice(0, 4) ?? ""}
             />
+            <input type="hidden" name="genres" value={JSON.stringify(genreNames(selected))} />
 
             <div className="flex items-center gap-3 rounded-xl border border-blue-soft-strong bg-blue-soft p-2.5">
               <span className="h-16 w-11 flex-shrink-0 overflow-hidden rounded-md bg-bg-elev-2">

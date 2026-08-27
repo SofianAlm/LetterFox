@@ -191,6 +191,7 @@ function WatchlistCard({
             title: item.title,
             release_date: item.release_year ? `${item.release_year}-01-01` : null,
             poster_path: item.poster_path,
+            genres: item.genres,
           }}
           onAdded={markWatched}
         />
@@ -204,6 +205,7 @@ function WatchlistCard({
             name: item.title,
             first_air_date: item.release_year ? `${item.release_year}-01-01` : null,
             poster_path: item.poster_path,
+            genres: item.genres,
           }}
           onAdded={markWatched}
         />

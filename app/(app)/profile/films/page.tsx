@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MyEntryTypeList } from "@/components/MyEntryTypeList";
+import { MediaBackground } from "@/components/MediaBackground";
 import type { FeedEntry } from "@/lib/feed";
 
 export default async function ProfileFilmsPage() {
@@ -19,6 +20,7 @@ export default async function ProfileFilmsPage() {
 
   return (
     <div className="rounded-2xl border border-border bg-bg-elev p-7">
+      <MediaBackground media="movie" />
       <h3 className="mb-4 text-[15.5px] font-bold">Mes films</h3>
       <MyEntryTypeList
         entries={(entries ?? []) as unknown as FeedEntry[]}

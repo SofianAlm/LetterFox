@@ -34,7 +34,7 @@ export function Sidebar({
           {VERSION}
         </span>
       </div>
-      <ThemeToggle className="mt-3 h-8 w-8" />
+      <ThemeToggle className="mt-3 h-8 w-14" />
 
       <nav className="mt-8 flex flex-col gap-1">
         {LINKS.map((link) => {

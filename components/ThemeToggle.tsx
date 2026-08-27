@@ -7,6 +7,7 @@ const STORAGE_KEY = "letterfox-theme";
 
 export function ThemeToggle({ className }: { className?: string }) {
   const [theme, setTheme] = useState<"dark" | "light" | null>(null);
+  const isLight = theme === "light";
 
   useEffect(() => {
     const current = document.documentElement.getAttribute("data-theme");
@@ -14,7 +15,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   }, []);
 
   function toggle() {
-    const next = theme === "light" ? "dark" : "light";
+    const next = isLight ? "dark" : "light";
     setTheme(next);
     document.documentElement.setAttribute("data-theme", next);
     try {
@@ -28,10 +29,20 @@ export function ThemeToggle({ className }: { className?: string }) {
     <button
       type="button"
       onClick={toggle}
+      role="switch"
+      aria-checked={isLight}
       aria-label="Changer de thème"
-      className={`flex items-center justify-center rounded-lg border border-border-strong bg-bg-elev-2 text-text-muted hover:text-text ${className ?? "h-9 w-9"}`}
+      className={`relative flex items-center justify-between rounded-full border border-border-strong bg-bg-elev-2 px-[7px] ${className ?? "h-8 w-14"}`}
     >
-      {theme === "light" ? <MoonIcon className="h-4 w-4" /> : <SunIcon className="h-4 w-4" />}
+      <MoonIcon className="h-3.5 w-3.5 flex-shrink-0 text-text-faint" />
+      <SunIcon className="h-3.5 w-3.5 flex-shrink-0 text-text-faint" />
+      <span
+        className={`absolute top-1 flex h-6 w-6 items-center justify-center rounded-full bg-accent text-on-accent shadow transition-[left] duration-200 ease-out ${
+          isLight ? "left-[calc(100%-27px)]" : "left-[3px]"
+        }`}
+      >
+        {isLight ? <SunIcon className="h-3.5 w-3.5" /> : <MoonIcon className="h-3.5 w-3.5" />}
+      </span>
     </button>
   );
 }
