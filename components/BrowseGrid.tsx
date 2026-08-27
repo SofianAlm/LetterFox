@@ -19,7 +19,7 @@ import { PlusIcon, ChevronDownIcon } from "./icons";
 type Profile = { id: string; display_name: string; avatar_color: string | null };
 
 const SORT_OPTIONS = [
-  { value: "added", label: "Date d'ajout", defaultDir: "desc" },
+  { value: "added", label: "Date de visionnage", defaultDir: "desc" },
   { value: "alpha", label: "Alphabétique", defaultDir: "asc" },
   { value: "release", label: "Date de sortie", defaultDir: "desc" },
   { value: "rating", label: "Note", defaultDir: "desc" },
