@@ -43,3 +43,7 @@ export function titleAverage(summary: TitleSummary): number | null {
 export function latestSeason(summary: TitleSummary): number {
   return Math.max(0, ...summary.entries.map((e) => e.season_number ?? 0));
 }
+
+export function latestWatchedOn(summary: TitleSummary): number {
+  return Math.max(...summary.entries.map((e) => new Date(e.watched_on).getTime()));
+}

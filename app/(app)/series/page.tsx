@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SeriesBrowser } from "@/components/SeriesBrowser";
 import { MediaBackground } from "@/components/MediaBackground";
+import { computeAutoWatching } from "@/lib/series-watching";
 import type { FeedEntry } from "@/lib/feed";
 
 export default async function SeriesPage() {
@@ -16,28 +17,28 @@ export default async function SeriesPage() {
       supabase
         .from("watch_entries")
         .select(
-          "*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id)",
+          "*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id, profiles(display_name))",
         )
         .eq("media_type", "tv")
         .order("watched_on", { ascending: false }),
       supabase.from("profiles").select("id, display_name, avatar_color").order("display_name"),
       supabase.from("locations").select("name").order("name").returns<{ name: string }[]>(),
-      supabase
-        .from("series_progress")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false }),
+      supabase.from("series_progress").select("*").order("created_at", { ascending: false }),
     ]);
+
+  const tvEntries = (entries ?? []) as unknown as FeedEntry[];
+  const autoWatching = await computeAutoWatching(tvEntries);
 
   return (
     <div className="mx-auto max-w-[1240px] px-6 pb-24 pt-10 sm:px-10">
       <MediaBackground media="tv" />
       <SeriesBrowser
-        entries={(entries ?? []) as unknown as FeedEntry[]}
+        entries={tvEntries}
         profiles={profiles ?? []}
         locations={(locations ?? []).map((l) => l.name)}
         currentUserId={user.id}
-        progress={progress ?? []}
+        autoWatching={autoWatching}
+        manualWatching={progress ?? []}
       />
     </div>
   );

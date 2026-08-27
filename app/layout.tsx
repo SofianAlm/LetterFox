@@ -15,7 +15,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "LetterFox",
+  title: "LetterFoxd, by Skalrow",
   description: "Le ciné-club privé de la bande.",
 };
 

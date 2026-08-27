@@ -8,6 +8,7 @@ import {
   FilmIcon,
   TvIcon,
   BookmarkIcon,
+  TrophyIcon,
   LogInIcon,
   MenuIcon,
   CloseIcon,
@@ -15,10 +16,11 @@ import {
 import { initials, avatarColor as hashAvatarColor } from "@/lib/avatar-color";
 
 const LINKS = [
-  { href: "/", label: "Accueil", icon: HomeIcon },
+  { href: "/", label: "Derniers visionnages", icon: HomeIcon },
   { href: "/films", label: "Films", icon: FilmIcon },
   { href: "/series", label: "Séries", icon: TvIcon },
   { href: "/watchlist", label: "À voir", icon: BookmarkIcon },
+  { href: "/tops", label: "Tops", icon: TrophyIcon },
 ];
 
 export function MobileMenu({
@@ -126,12 +128,12 @@ export function MobileMenu({
               </Link>
             )}
 
-            <a
-              href="https://skalrow.fr"
-              className="mt-4 flex items-center gap-1.5 px-2 text-[12.5px] font-semibold text-text-faint"
-            >
-              ← Retour à skalrow.fr
-            </a>
+            <footer className="site-footer mt-4 px-2">
+              © {new Date().getFullYear()} · made by{" "}
+              <a href="https://skalrow.fr" className="footer-brand">
+                Skalrow
+              </a>
+            </footer>
           </aside>
         </div>
       )}

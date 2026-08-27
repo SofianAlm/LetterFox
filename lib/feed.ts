@@ -3,7 +3,11 @@ import type { Tables } from "@/lib/database.types";
 export type FeedEntry = Tables<"watch_entries"> & {
   profiles: { display_name: string; avatar_color: string | null } | null;
   locations: { name: string } | null;
-  reactions: { emoji: string; user_id: string }[];
+  reactions: {
+    emoji: string;
+    user_id: string;
+    profiles: { display_name: string } | null;
+  }[];
 };
 
 function groupKey(

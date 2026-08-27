@@ -8,6 +8,7 @@ import { PlusIcon } from "./icons";
 import type { FeedEntry } from "@/lib/feed";
 import type { TitleSummary } from "@/lib/aggregate";
 import type { Tables } from "@/lib/database.types";
+import type { AutoWatchingItem } from "@/lib/series-watching";
 
 const TABS = [
   { value: "vues", label: "Vues" },
@@ -19,18 +20,24 @@ export function SeriesBrowser({
   profiles,
   locations,
   currentUserId,
-  progress,
+  autoWatching,
+  manualWatching,
 }: {
   entries: FeedEntry[];
   profiles: { id: string; display_name: string; avatar_color: string | null }[];
   locations: string[];
   currentUserId: string;
-  progress: Tables<"series_progress">[];
+  autoWatching: AutoWatchingItem[];
+  manualWatching: Tables<"series_progress">[];
 }) {
   const [tab, setTab] = useState<(typeof TABS)[number]["value"]>("vues");
   const [open, setOpen] = useState(false);
   const [quickAdd, setQuickAdd] = useState<TitleSummary | null>(null);
   const count = entries.length;
+  const watchingKeys = new Set(autoWatching.map((a) => `${a.userId}:${a.tmdbId}`));
+  const watchingCount =
+    autoWatching.length +
+    manualWatching.filter((m) => !watchingKeys.has(`${m.user_id}:${m.tmdb_id}`)).length;
 
   return (
     <>
@@ -67,7 +74,7 @@ export function SeriesBrowser({
             }`}
           >
             {t.label}
-            {t.value === "en_cours" && progress.length > 0 && ` (${progress.length})`}
+            {t.value === "en_cours" && watchingCount > 0 && ` (${watchingCount})`}
           </button>
         ))}
       </div>
@@ -89,7 +96,13 @@ export function SeriesBrowser({
           }}
         />
       ) : (
-        <SeriesWatchingGrid progress={progress} locations={locations} />
+        <SeriesWatchingGrid
+          autoItems={autoWatching}
+          manualItems={manualWatching}
+          profiles={profiles}
+          locations={locations}
+          currentUserId={currentUserId}
+        />
       )}
 
       {open &&

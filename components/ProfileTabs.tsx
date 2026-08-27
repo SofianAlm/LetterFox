@@ -14,23 +14,25 @@ export function ProfileTabs({ isAdmin }: { isAdmin: boolean }) {
   ];
 
   return (
-    <div className="mb-8 inline-flex flex-wrap gap-1 rounded-full border border-border bg-bg-elev-2 p-1">
-      {tabs.map((tab) => {
-        const active = pathname === tab.href;
-        const Icon = tab.icon;
-        return (
-          <Link
-            key={tab.href}
-            href={tab.href}
-            className={`flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-bold ${
-              active ? "bg-accent text-on-accent" : "text-text-muted"
-            }`}
-          >
-            <Icon className="h-[15px] w-[15px]" />
-            {tab.label}
-          </Link>
-        );
-      })}
+    <div className="mb-8 -mx-6 overflow-x-auto px-6 sm:-mx-10 sm:px-10">
+      <div className="inline-flex gap-1 rounded-full border border-border bg-bg-elev-2 p-1">
+        {tabs.map((tab) => {
+          const active = pathname === tab.href;
+          const Icon = tab.icon;
+          return (
+            <Link
+              key={tab.href}
+              href={tab.href}
+              className={`flex flex-shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-4 py-2 text-[13px] font-bold ${
+                active ? "bg-accent text-on-accent" : "text-text-muted"
+              }`}
+            >
+              <Icon className="h-[15px] w-[15px]" />
+              {tab.label}
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 }
