@@ -13,10 +13,10 @@ export default async function SeriesPage() {
   const [{ data: entries }, { data: profiles }, { data: locations }] = await Promise.all([
     supabase
       .from("watch_entries")
-      .select("*, profiles(display_name), locations(name), reactions(emoji, user_id)")
+      .select("*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id)")
       .eq("media_type", "tv")
       .order("watched_on", { ascending: false }),
-    supabase.from("profiles").select("id, display_name").order("display_name"),
+    supabase.from("profiles").select("id, display_name, avatar_color").order("display_name"),
     supabase.from("locations").select("name").order("name").returns<{ name: string }[]>(),
   ]);
 

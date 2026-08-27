@@ -184,6 +184,63 @@ export type Database = {
           },
         ]
       }
+      watchlist_items: {
+        Row: {
+          added_by: string
+          created_at: string
+          id: string
+          media_type: string
+          poster_path: string | null
+          release_year: number | null
+          title: string
+          tmdb_id: number
+          watched: boolean
+          watched_at: string | null
+          watched_by: string | null
+        }
+        Insert: {
+          added_by: string
+          created_at?: string
+          id?: string
+          media_type: string
+          poster_path?: string | null
+          release_year?: number | null
+          title: string
+          tmdb_id: number
+          watched?: boolean
+          watched_at?: string | null
+          watched_by?: string | null
+        }
+        Update: {
+          added_by?: string
+          created_at?: string
+          id?: string
+          media_type?: string
+          poster_path?: string | null
+          release_year?: number | null
+          title?: string
+          tmdb_id?: number
+          watched?: boolean
+          watched_at?: string | null
+          watched_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watchlist_items_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watchlist_items_watched_by_fkey"
+            columns: ["watched_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

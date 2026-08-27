@@ -6,6 +6,7 @@ import { formatRating } from "@/lib/ratings";
 import { formatFullDate } from "@/lib/date";
 import { ChevronDownIcon } from "./icons";
 import { ReactionBar } from "./ReactionBar";
+import { EntryActions } from "./EntryActions";
 import type { FeedEntry } from "@/lib/feed";
 
 export function EpisodeRow({
@@ -13,11 +14,13 @@ export function EpisodeRow({
   episodeName,
   entries,
   currentUserId,
+  path,
 }: {
   episodeNumber: number;
   episodeName: string;
   entries: FeedEntry[];
   currentUserId: string;
+  path: string;
 }) {
   const [open, setOpen] = useState(false);
   const rated = entries.filter((e) => e.rating !== null);
@@ -47,7 +50,7 @@ export function EpisodeRow({
             <span
               key={e.id}
               className="flex h-[22px] w-[22px] items-center justify-center rounded-full border-2 border-bg-elev font-display text-[8.5px] font-extrabold text-[oklch(20%_0.03_0)]"
-              style={{ background: avatarColor(e.profiles?.display_name ?? "?") }}
+              style={{ background: e.profiles?.avatar_color ?? avatarColor(e.profiles?.display_name ?? "?") }}
             >
               {initials(e.profiles?.display_name ?? "?")}
             </span>
@@ -69,7 +72,7 @@ export function EpisodeRow({
             <div key={e.id} className="flex gap-3">
               <div
                 className="flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-full font-display text-[10px] font-extrabold text-[oklch(20%_0.03_0)]"
-                style={{ background: avatarColor(e.profiles?.display_name ?? "?") }}
+                style={{ background: e.profiles?.avatar_color ?? avatarColor(e.profiles?.display_name ?? "?") }}
               >
                 {initials(e.profiles?.display_name ?? "?")}
               </div>
@@ -88,8 +91,9 @@ export function EpisodeRow({
                     </p>
                   )
                 )}
-                <div className="mt-2">
+                <div className="mt-2 flex items-center gap-2">
                   <ReactionBar entryId={e.id} reactions={e.reactions} currentUserId={currentUserId} />
+                  <EntryActions entry={e} currentUserId={currentUserId} path={path} />
                 </div>
               </div>
             </div>

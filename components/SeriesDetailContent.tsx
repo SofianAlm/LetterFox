@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { seasonBreakdown, formatRating } from "@/lib/ratings";
 import { EpisodeRow } from "./EpisodeRow";
 import { ReactionBar } from "./ReactionBar";
+import { EntryActions } from "./EntryActions";
 import { initials, avatarColor } from "@/lib/avatar-color";
 import { formatFullDate } from "@/lib/date";
 import type { FeedEntry } from "@/lib/feed";
@@ -30,6 +31,7 @@ export function SeriesDetailContent({
       .then((data) => setEpisodes(data.episodes ?? []));
   }, [tmdbId, activeSeason]);
 
+  const path = `/series/${tmdbId}`;
   const breakdown = seasonBreakdown(entries, activeSeason);
   const seasonWideEntries = entries.filter(
     (e) => e.granularity === "season" && e.season_number === activeSeason,
@@ -88,7 +90,7 @@ export function SeriesDetailContent({
               <div key={e.id} className="flex gap-3">
                 <div
                   className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-full font-display text-xs font-extrabold text-[oklch(20%_0.03_0)]"
-                  style={{ background: avatarColor(e.profiles?.display_name ?? "?") }}
+                  style={{ background: e.profiles?.avatar_color ?? avatarColor(e.profiles?.display_name ?? "?") }}
                 >
                   {initials(e.profiles?.display_name ?? "?")}
                 </div>
@@ -112,8 +114,9 @@ export function SeriesDetailContent({
                       « {e.comment} »
                     </p>
                   )}
-                  <div className="mt-2">
+                  <div className="mt-2 flex items-center gap-2">
                     <ReactionBar entryId={e.id} reactions={e.reactions} currentUserId={currentUserId} />
+                    <EntryActions entry={e} currentUserId={currentUserId} path={path} />
                   </div>
                 </div>
               </div>
@@ -139,6 +142,7 @@ export function SeriesDetailContent({
                   e.episode_number === ep.episode_number,
               )}
               currentUserId={currentUserId}
+              path={path}
             />
           ))}
         </div>

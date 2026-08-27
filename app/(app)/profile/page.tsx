@@ -1,10 +1,11 @@
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
-import { initials, avatarColor } from "@/lib/avatar-color";
+import { initials, avatarColor as hashAvatarColor } from "@/lib/avatar-color";
 import { formatRating } from "@/lib/ratings";
 import { formatFullDate } from "@/lib/date";
 import { posterUrl } from "@/lib/tmdb-image";
 import { PasswordForm } from "@/components/PasswordForm";
+import { ProfileEditForm } from "@/components/ProfileEditForm";
 import { SignOutButton } from "@/components/SignOutButton";
 import type { Tables } from "@/lib/database.types";
 
@@ -18,10 +19,10 @@ export default async function ProfilePage() {
   const [{ data: profileRows }, { data: myEntries }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("display_name, created_at")
+      .select("display_name, avatar_color, created_at")
       .eq("id", user.id)
       .limit(1)
-      .returns<{ display_name: string; created_at: string }[]>(),
+      .returns<{ display_name: string; avatar_color: string | null; created_at: string }[]>(),
     supabase
       .from("watch_entries")
       .select("*")
@@ -30,6 +31,8 @@ export default async function ProfilePage() {
       .returns<Tables<"watch_entries">[]>(),
   ]);
   const profile = profileRows?.[0];
+  const displayName = profile?.display_name ?? user.email ?? "?";
+  const avatarColor = profile?.avatar_color ?? hashAvatarColor(displayName);
 
   const entries = myEntries ?? [];
   const filmCount = entries.filter((e) => e.media_type === "movie").length;
@@ -39,14 +42,13 @@ export default async function ProfilePage() {
     ? rated.reduce((sum, e) => sum + e.rating!, 0) / rated.length
     : null;
   const recent = entries.slice(0, 5);
-  const displayName = profile?.display_name ?? user.email ?? "?";
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-[320px_1fr] md:items-start">
       <div className="rounded-2xl border border-border bg-bg-elev p-7 text-center">
         <div
           className="mx-auto flex h-[88px] w-[88px] items-center justify-center rounded-full font-display text-[26px] font-extrabold text-[oklch(20%_0.03_0)]"
-          style={{ background: avatarColor(displayName) }}
+          style={{ background: avatarColor }}
         >
           {initials(displayName)}
         </div>
@@ -81,6 +83,11 @@ export default async function ProfilePage() {
       </div>
 
       <div className="flex flex-col gap-6">
+        <div className="rounded-2xl border border-border bg-bg-elev p-7">
+          <h3 className="mb-5 text-[15.5px] font-bold">Mon profil</h3>
+          <ProfileEditForm displayName={displayName} avatarColor={avatarColor} />
+        </div>
+
         <div className="rounded-2xl border border-border bg-bg-elev p-7">
           <h3 className="mb-5 text-[15.5px] font-bold">Sécurité</h3>
           <PasswordForm />

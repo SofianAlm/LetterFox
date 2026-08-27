@@ -24,7 +24,7 @@ export default async function HomePage({
 
   let query = supabase
     .from("watch_entries")
-    .select("*, profiles(display_name), locations(name), reactions(emoji, user_id)")
+    .select("*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id)")
     .order("watched_on", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(60);

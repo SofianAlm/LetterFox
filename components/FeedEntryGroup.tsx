@@ -8,13 +8,13 @@ import { posterUrl } from "@/lib/tmdb-image";
 import { initials, avatarColor } from "@/lib/avatar-color";
 import { formatRating } from "@/lib/ratings";
 import { ReactionBar } from "./ReactionBar";
+import { EntryActions } from "./EntryActions";
 import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
 
 function typeLabel(entry: FeedEntry): string {
-  if (entry.media_type === "movie") return `Film · ${entry.language}`;
-  if (entry.granularity === "season")
-    return `Série · Saison ${entry.season_number} entière · ${entry.language}`;
-  return `Série · Saison ${entry.season_number} · Épisode ${entry.episode_number} · ${entry.language}`;
+  if (entry.media_type === "movie") return "Film";
+  if (entry.granularity === "season") return `Série · Saison ${entry.season_number} entière`;
+  return `Série · Saison ${entry.season_number} · Épisode ${entry.episode_number}`;
 }
 
 export function FeedEntryGroup({
@@ -77,7 +77,9 @@ export function FeedEntryGroup({
       <div className="mt-4 flex items-center gap-3">
         <div
           className="flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-full font-display text-[11px] font-extrabold text-[oklch(20%_0.03_0)]"
-          style={{ background: avatarColor(active.profiles?.display_name ?? "?") }}
+          style={{
+            background: active.profiles?.avatar_color ?? avatarColor(active.profiles?.display_name ?? "?"),
+          }}
         >
           {initials(active.profiles?.display_name ?? "?")}
         </div>
@@ -86,7 +88,13 @@ export function FeedEntryGroup({
           <span className="text-[13px] text-text-faint">· {active.locations.name}</span>
         )}
         <div className="flex-1" />
-        <ReactionBar entryId={active.id} reactions={active.reactions} currentUserId={currentUserId} />
+        <EntryActions entry={active} currentUserId={currentUserId} path="/" />
+        <ReactionBar
+          entryId={active.id}
+          reactions={active.reactions}
+          currentUserId={currentUserId}
+          size="lg"
+        />
       </div>
 
       {entries.length > 1 && (
