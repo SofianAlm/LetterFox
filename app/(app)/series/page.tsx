@@ -11,15 +11,23 @@ export default async function SeriesPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: entries }, { data: profiles }, { data: locations }] = await Promise.all([
-    supabase
-      .from("watch_entries")
-      .select("*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id)")
-      .eq("media_type", "tv")
-      .order("watched_on", { ascending: false }),
-    supabase.from("profiles").select("id, display_name, avatar_color").order("display_name"),
-    supabase.from("locations").select("name").order("name").returns<{ name: string }[]>(),
-  ]);
+  const [{ data: entries }, { data: profiles }, { data: locations }, { data: progress }] =
+    await Promise.all([
+      supabase
+        .from("watch_entries")
+        .select(
+          "*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id)",
+        )
+        .eq("media_type", "tv")
+        .order("watched_on", { ascending: false }),
+      supabase.from("profiles").select("id, display_name, avatar_color").order("display_name"),
+      supabase.from("locations").select("name").order("name").returns<{ name: string }[]>(),
+      supabase
+        .from("series_progress")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false }),
+    ]);
 
   return (
     <div className="mx-auto max-w-[1240px] px-6 pb-24 pt-10 sm:px-10">
@@ -29,6 +37,7 @@ export default async function SeriesPage() {
         profiles={profiles ?? []}
         locations={(locations ?? []).map((l) => l.name)}
         currentUserId={user.id}
+        progress={progress ?? []}
       />
     </div>
   );

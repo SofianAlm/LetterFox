@@ -10,7 +10,9 @@ import { initials, avatarColor } from "@/lib/avatar-color";
 import { formatRating } from "@/lib/ratings";
 import { ReactionBar } from "./ReactionBar";
 import { EntryActions } from "./EntryActions";
-import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
+import { AddFilmModal } from "./AddFilmModal";
+import { AddSeriesModal } from "./AddSeriesModal";
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "./icons";
 
 function typeLabel(entry: FeedEntry): string {
   if (entry.media_type === "movie") return "Film";
@@ -22,12 +24,15 @@ export function FeedEntryGroup({
   entries,
   currentUserId,
   isAdmin = false,
+  locations,
 }: {
   entries: FeedEntry[];
   currentUserId: string;
   isAdmin?: boolean;
+  locations: string[];
 }) {
   const [index, setIndex] = useState(0);
+  const [adding, setAdding] = useState(false);
   const head = entries[0];
   const active = entries[index];
   const { day, month } = formatDayMonth(head.watched_on);
@@ -144,12 +149,24 @@ export function FeedEntryGroup({
             )}
           </Link>
           <div className="min-w-0 flex-1">
-            <div
-              className={`text-[11px] font-extrabold uppercase tracking-wide ${
-                isFilm ? "text-blue" : "text-purple"
-              }`}
-            >
-              {typeLabel(head)}
+            <div className="flex items-center justify-between gap-2">
+              <div
+                className={`text-[11px] font-extrabold uppercase tracking-wide ${
+                  isFilm ? "text-blue" : "text-purple"
+                }`}
+              >
+                {typeLabel(head)}
+              </div>
+              {currentUserId && (
+                <button
+                  type="button"
+                  onClick={() => setAdding(true)}
+                  className="flex flex-shrink-0 items-center gap-1 rounded-full bg-bg-elev-2 px-2.5 py-1 text-[11px] font-bold text-text-muted hover:text-text"
+                >
+                  <PlusIcon className="h-3 w-3" />
+                  Ajouter
+                </button>
+              )}
             </div>
             <Link href={detailHref} className="block">
               <h3 className="mt-1 font-display text-[19px] font-bold hover:underline">
@@ -168,6 +185,42 @@ export function FeedEntryGroup({
           </div>
         </div>
       </div>
+
+      {adding && isFilm && (
+        <AddFilmModal
+          onClose={() => setAdding(false)}
+          locations={locations}
+          initialSelected={{
+            id: active.tmdb_id,
+            title: active.title,
+            release_date: active.release_year ? `${active.release_year}-01-01` : null,
+            poster_path: active.poster_path,
+            genres: active.genres,
+          }}
+          initialWatchedOn={active.watched_on}
+          initialLanguage={active.language === "VO" ? "VO" : "VF"}
+          initialLocation={active.locations?.name ?? undefined}
+        />
+      )}
+      {adding && !isFilm && (
+        <AddSeriesModal
+          onClose={() => setAdding(false)}
+          locations={locations}
+          initialSelected={{
+            id: active.tmdb_id,
+            name: active.title,
+            first_air_date: active.release_year ? `${active.release_year}-01-01` : null,
+            poster_path: active.poster_path,
+            genres: active.genres,
+          }}
+          initialWatchedOn={active.watched_on}
+          initialLanguage={active.language === "VO" ? "VO" : "VF"}
+          initialLocation={active.locations?.name ?? undefined}
+          initialGranularity={active.granularity === "episode" ? "episode" : "season"}
+          initialSeasonNumber={active.season_number ?? undefined}
+          initialEpisodeNumber={active.episode_number ?? undefined}
+        />
+      )}
     </div>
   );
 }
