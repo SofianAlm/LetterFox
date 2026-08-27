@@ -36,8 +36,10 @@ export function SeriesBrowser({
   const count = entries.length;
   const watchingKeys = new Set(autoWatching.map((a) => `${a.userId}:${a.tmdbId}`));
   const watchingCount =
-    autoWatching.length +
-    manualWatching.filter((m) => !watchingKeys.has(`${m.user_id}:${m.tmdb_id}`)).length;
+    autoWatching.filter((a) => a.userId === currentUserId).length +
+    manualWatching.filter(
+      (m) => m.user_id === currentUserId && !watchingKeys.has(`${m.user_id}:${m.tmdb_id}`),
+    ).length;
 
   return (
     <>
