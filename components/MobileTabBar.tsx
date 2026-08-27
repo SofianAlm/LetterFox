@@ -2,20 +2,25 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { HomeIcon, FilmIcon, TvIcon, UserIcon, LogInIcon } from "./icons";
 
-const TABS = [
-  { href: "/", label: "Accueil" },
-  { href: "/films", label: "Films" },
-  { href: "/series", label: "Séries" },
-  { href: "/profile", label: "Profil" },
-];
-
-export function MobileTabBar() {
+export function MobileTabBar({ displayName }: { displayName: string | null }) {
   const pathname = usePathname();
+
+  const tabs = [
+    { href: "/", label: "Accueil", icon: HomeIcon },
+    { href: "/films", label: "Films", icon: FilmIcon },
+    { href: "/series", label: "Séries", icon: TvIcon },
+    displayName
+      ? { href: "/profile", label: "Profil", icon: UserIcon }
+      : { href: "/login", label: "Connexion", icon: LogInIcon },
+  ];
+
   return (
     <div className="fixed inset-x-0 bottom-0 z-10 flex border-t border-border bg-bg/95 px-2 pb-3.5 pt-2.5 backdrop-blur md:hidden">
-      {TABS.map((tab) => {
+      {tabs.map((tab) => {
         const active = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
+        const Icon = tab.icon;
         return (
           <Link
             key={tab.href}
@@ -24,6 +29,7 @@ export function MobileTabBar() {
               active ? "text-purple" : "text-text-faint"
             }`}
           >
+            <Icon className="h-[19px] w-[19px]" />
             {tab.label}
           </Link>
         );

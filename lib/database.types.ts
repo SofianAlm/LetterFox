@@ -115,6 +115,7 @@ export type Database = {
           granularity: string
           id: string
           is_rewatch: boolean
+          language: string
           location_id: string | null
           media_type: string
           poster_path: string | null
@@ -134,6 +135,7 @@ export type Database = {
           granularity: string
           id?: string
           is_rewatch?: boolean
+          language?: string
           location_id?: string | null
           media_type: string
           poster_path?: string | null
@@ -153,6 +155,7 @@ export type Database = {
           granularity?: string
           id?: string
           is_rewatch?: boolean
+          language?: string
           location_id?: string | null
           media_type?: string
           poster_path?: string | null

@@ -11,9 +11,10 @@ import { ReactionBar } from "./ReactionBar";
 import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
 
 function typeLabel(entry: FeedEntry): string {
-  if (entry.media_type === "movie") return "Film";
-  if (entry.granularity === "season") return `Série · Saison ${entry.season_number} entière`;
-  return `Série · Saison ${entry.season_number} · Épisode ${entry.episode_number}`;
+  if (entry.media_type === "movie") return `Film · ${entry.language}`;
+  if (entry.granularity === "season")
+    return `Série · Saison ${entry.season_number} entière · ${entry.language}`;
+  return `Série · Saison ${entry.season_number} · Épisode ${entry.episode_number} · ${entry.language}`;
 }
 
 export function FeedEntryGroup({

@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Navbar } from "@/components/Navbar";
+import { Sidebar } from "@/components/Sidebar";
 import { MobileTabBar } from "@/components/MobileTabBar";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -9,21 +8,22 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login");
-
-  const { data: profileRows } = await supabase
-    .from("profiles")
-    .select("display_name")
-    .eq("id", user.id)
-    .limit(1)
-    .returns<{ display_name: string }[]>();
-  const profile = profileRows?.[0];
+  let displayName: string | null = null;
+  if (user) {
+    const { data: profileRows } = await supabase
+      .from("profiles")
+      .select("display_name")
+      .eq("id", user.id)
+      .limit(1)
+      .returns<{ display_name: string }[]>();
+    displayName = profileRows?.[0]?.display_name ?? user.email ?? "?";
+  }
 
   return (
     <div className="min-h-screen pb-20 md:pb-0">
-      <Navbar displayName={profile?.display_name ?? user.email ?? "?"} />
-      {children}
-      <MobileTabBar />
+      <Sidebar displayName={displayName} />
+      <div className="md:pl-[232px]">{children}</div>
+      <MobileTabBar displayName={displayName} />
     </div>
   );
 }

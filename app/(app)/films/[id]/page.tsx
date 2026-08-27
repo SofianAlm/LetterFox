@@ -124,6 +124,7 @@ export default async function FilmDetailPage({ params }: { params: Promise<{ id:
                     <span className="ml-2 text-text-faint">
                       {formatFullDate(entry.watched_on)}
                       {entry.locations?.name && ` · ${entry.locations.name}`}
+                      {` · ${entry.language}`}
                     </span>
                   </div>
                   {!entry.is_rewatch && (
