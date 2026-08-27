@@ -1,4 +1,3 @@
-import { FoxLogo } from "@/components/FoxLogo";
 import { LoginForm } from "@/components/LoginForm";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -15,7 +14,7 @@ export default function LoginPage() {
           }}
         />
         <div className="relative flex items-center gap-2.5">
-          <FoxLogo className="h-8 w-8" />
+          <span className="text-2xl leading-none">🎬</span>
           <span className="font-display text-xl font-extrabold">LetterFox</span>
         </div>
         <div className="relative max-w-md">
@@ -31,7 +30,7 @@ export default function LoginPage() {
       <div className="flex flex-1 items-center justify-center p-10">
         <div className="w-full max-w-sm">
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <FoxLogo className="h-7 w-7" />
+            <span className="text-xl leading-none">🎬</span>
             <span className="font-display text-lg font-extrabold">LetterFox</span>
           </div>
           <div className="mb-5 text-xs font-extrabold uppercase tracking-wide text-text-faint">
