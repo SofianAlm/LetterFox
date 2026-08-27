@@ -8,6 +8,7 @@ import { seriesAverage, formatRating } from "@/lib/ratings";
 import { ChevronLeftIcon } from "@/components/icons";
 import { SeriesDetailContent } from "@/components/SeriesDetailContent";
 import { MediaBackground } from "@/components/MediaBackground";
+import { isAdmin } from "@/lib/admin";
 import type { FeedEntry } from "@/lib/feed";
 
 export default async function SeriesDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -15,19 +16,17 @@ export default async function SeriesDetailPage({ params }: { params: Promise<{ i
   const tmdbId = Number(id);
 
   const supabase = await createClient();
-  const [
-    {
-      data: { user },
-    },
-    { data: entries },
-  ] = await Promise.all([
-    supabase.auth.getUser(),
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [{ data: entries }, admin] = await Promise.all([
     supabase
       .from("watch_entries")
       .select("*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id)")
       .eq("media_type", "tv")
       .eq("tmdb_id", tmdbId)
       .order("watched_on", { ascending: false }),
+    isAdmin(supabase, user?.id),
   ]);
 
   if (!entries || entries.length === 0) notFound();
@@ -119,6 +118,7 @@ export default async function SeriesDetailPage({ params }: { params: Promise<{ i
         entries={list}
         seasonNumbers={seasonNumbers}
         currentUserId={user?.id ?? ""}
+        isAdmin={admin}
       />
     </div>
   );

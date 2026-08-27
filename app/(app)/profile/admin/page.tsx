@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CreateAccountForm } from "@/components/CreateAccountForm";
+import { BackfillGenresButton } from "@/components/BackfillGenresButton";
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -25,6 +26,15 @@ export default async function AdminPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="rounded-2xl border border-border bg-bg-elev p-7">
+        <h3 className="mb-1 text-[15.5px] font-bold">Catégories des films &amp; séries</h3>
+        <p className="mb-5 text-[13px] text-text-faint">
+          Récupère la catégorie (comédie, thriller…) sur TMDB pour tous les films et séries déjà
+          ajoutés qui n&rsquo;en ont pas encore.
+        </p>
+        <BackfillGenresButton />
+      </div>
+
       <div className="rounded-2xl border border-border bg-bg-elev p-7">
         <h3 className="mb-1 text-[15.5px] font-bold">Créer un compte</h3>
         <p className="mb-5 text-[13px] text-text-faint">

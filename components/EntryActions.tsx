@@ -9,17 +9,19 @@ import type { FeedEntry } from "@/lib/feed";
 export function EntryActions({
   entry,
   currentUserId,
+  isAdmin = false,
   path,
 }: {
   entry: FeedEntry;
   currentUserId: string;
+  isAdmin?: boolean;
   path: string;
 }) {
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  if (entry.user_id !== currentUserId) return null;
+  if (entry.user_id !== currentUserId && !isAdmin) return null;
 
   return (
     <>

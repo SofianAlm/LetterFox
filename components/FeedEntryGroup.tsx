@@ -21,9 +21,11 @@ function typeLabel(entry: FeedEntry): string {
 export function FeedEntryGroup({
   entries,
   currentUserId,
+  isAdmin = false,
 }: {
   entries: FeedEntry[];
   currentUserId: string;
+  isAdmin?: boolean;
 }) {
   const [index, setIndex] = useState(0);
   const head = entries[0];
@@ -90,7 +92,7 @@ export function FeedEntryGroup({
           <span className="text-[13px] text-text-faint">· {active.locations.name}</span>
         )}
         <div className="flex-1" />
-        <EntryActions entry={active} currentUserId={currentUserId} path="/" />
+        <EntryActions entry={active} currentUserId={currentUserId} isAdmin={isAdmin} path="/" />
         <ReactionBar
           entryId={active.id}
           reactions={active.reactions}

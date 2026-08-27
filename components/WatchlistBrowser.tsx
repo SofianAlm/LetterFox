@@ -45,6 +45,8 @@ export function WatchlistBrowser({
       fetch("/api/tmdb/genres?type=tv").then((res) => res.json()),
     ]).then(([movie, tv]) => {
       setGenreLists({ movie: movie.genres ?? [], tv: tv.genres ?? [] });
+    }).catch(() => {
+      // Genre lists unavailable — the category filter just won't show any options.
     });
   }, []);
 

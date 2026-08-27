@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { groupFeedEntries, type FeedEntry } from "@/lib/feed";
 import { FeedEntryGroup } from "@/components/FeedEntryGroup";
 import { MediaBackground } from "@/components/MediaBackground";
+import { isAdmin } from "@/lib/admin";
 
 const FILTERS = [
   { value: "all", label: "Tout" },
@@ -32,7 +33,7 @@ export default async function HomePage({
 
   if (activeFilter !== "all") query = query.eq("media_type", activeFilter);
 
-  const { data } = await query;
+  const [{ data }, admin] = await Promise.all([query, isAdmin(supabase, user?.id)]);
   const entries = (data ?? []) as unknown as FeedEntry[];
   const groups = groupFeedEntries(entries);
 
@@ -64,7 +65,12 @@ export default async function HomePage({
       ) : (
         <div className="flex flex-col">
           {groups.map((group) => (
-            <FeedEntryGroup key={group[0].id} entries={group} currentUserId={user?.id ?? ""} />
+            <FeedEntryGroup
+              key={group[0].id}
+              entries={group}
+              currentUserId={user?.id ?? ""}
+              isAdmin={admin}
+            />
           ))}
         </div>
       )}

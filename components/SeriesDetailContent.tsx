@@ -16,11 +16,13 @@ export function SeriesDetailContent({
   entries,
   seasonNumbers,
   currentUserId,
+  isAdmin = false,
 }: {
   tmdbId: number;
   entries: FeedEntry[];
   seasonNumbers: number[];
   currentUserId: string;
+  isAdmin?: boolean;
 }) {
   const [activeSeason, setActiveSeason] = useState(seasonNumbers.at(-1) ?? 1);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
@@ -116,7 +118,7 @@ export function SeriesDetailContent({
                   )}
                   <div className="mt-2 flex items-center gap-2">
                     <ReactionBar entryId={e.id} reactions={e.reactions} currentUserId={currentUserId} />
-                    <EntryActions entry={e} currentUserId={currentUserId} path={path} />
+                    <EntryActions entry={e} currentUserId={currentUserId} isAdmin={isAdmin} path={path} />
                   </div>
                 </div>
               </div>
@@ -142,6 +144,7 @@ export function SeriesDetailContent({
                   e.episode_number === ep.episode_number,
               )}
               currentUserId={currentUserId}
+              isAdmin={isAdmin}
               path={path}
             />
           ))}

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { isAdmin } from "@/lib/admin";
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -150,7 +151,8 @@ export async function updateEntry(
     user.id,
   );
 
-  const { error } = await supabase
+  const admin = await isAdmin(supabase, user.id);
+  let updateQuery = supabase
     .from("watch_entries")
     .update({
       watched_on: String(formData.get("watched_on")),
@@ -160,8 +162,10 @@ export async function updateEntry(
       comment: isRewatch ? null : String(formData.get("comment") ?? "").trim() || null,
       is_rewatch: isRewatch,
     })
-    .eq("id", entryId)
-    .eq("user_id", user.id);
+    .eq("id", entryId);
+  if (!admin) updateQuery = updateQuery.eq("user_id", user.id);
+
+  const { error } = await updateQuery;
 
   if (error) return { error: "Impossible de modifier cet avis." };
 
@@ -179,7 +183,11 @@ export async function deleteEntry(entryId: string, path: string) {
   } = await supabase.auth.getUser();
   if (!user) return;
 
-  await supabase.from("watch_entries").delete().eq("id", entryId).eq("user_id", user.id);
+  const admin = await isAdmin(supabase, user.id);
+  let deleteQuery = supabase.from("watch_entries").delete().eq("id", entryId);
+  if (!admin) deleteQuery = deleteQuery.eq("user_id", user.id);
+  await deleteQuery;
+
   revalidatePath(path);
   revalidatePath("/");
   revalidatePath("/profile");

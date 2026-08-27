@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { HomeIcon, FilmIcon, TvIcon, BookmarkIcon, LogInIcon } from "./icons";
 import { initials, avatarColor as hashAvatarColor } from "@/lib/avatar-color";
 import { VERSION } from "@/lib/version";
-import { ThemeToggle } from "./ThemeToggle";
 
 const LINKS = [
   { href: "/", label: "Accueil", icon: HomeIcon },
@@ -34,7 +33,6 @@ export function Sidebar({
           {VERSION}
         </span>
       </div>
-      <ThemeToggle className="mt-3 h-8 w-14" />
 
       <nav className="mt-8 flex flex-col gap-1">
         {LINKS.map((link) => {
