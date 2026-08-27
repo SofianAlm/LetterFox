@@ -43,6 +43,8 @@ export function AddWatchlistModal({ onClose }: { onClose: () => void }) {
       const toMap = (list: { id: number; name: string }[]) =>
         Object.fromEntries(list.map((g) => [g.id, g.name]));
       setGenreMaps({ movie: toMap(movie.genres ?? []), tv: toMap(tv.genres ?? []) });
+    }).catch(() => {
+      // Genre lists unavailable — the item still gets added, just without tags.
     });
   }, []);
 

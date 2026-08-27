@@ -14,12 +14,14 @@ export function EpisodeRow({
   episodeName,
   entries,
   currentUserId,
+  isAdmin = false,
   path,
 }: {
   episodeNumber: number;
   episodeName: string;
   entries: FeedEntry[];
   currentUserId: string;
+  isAdmin?: boolean;
   path: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -93,7 +95,7 @@ export function EpisodeRow({
                 )}
                 <div className="mt-2 flex items-center gap-2">
                   <ReactionBar entryId={e.id} reactions={e.reactions} currentUserId={currentUserId} />
-                  <EntryActions entry={e} currentUserId={currentUserId} path={path} />
+                  <EntryActions entry={e} currentUserId={currentUserId} isAdmin={isAdmin} path={path} />
                 </div>
               </div>
             </div>

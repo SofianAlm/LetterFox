@@ -54,6 +54,9 @@ export function AddSeriesModal({
       .then((data) => {
         const list: { id: number; name: string }[] = data.genres ?? [];
         setGenreMap(Object.fromEntries(list.map((g) => [g.id, g.name])));
+      })
+      .catch(() => {
+        // Genre list unavailable — the series still gets added, just without tags.
       });
   }, []);
 

@@ -11,6 +11,7 @@ import { ReactionBar } from "@/components/ReactionBar";
 import { EntryActions } from "@/components/EntryActions";
 import { MediaBackground } from "@/components/MediaBackground";
 import { ChevronLeftIcon } from "@/components/icons";
+import { isAdmin } from "@/lib/admin";
 import type { FeedEntry } from "@/lib/feed";
 
 export default async function FilmDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -18,19 +19,17 @@ export default async function FilmDetailPage({ params }: { params: Promise<{ id:
   const tmdbId = Number(id);
 
   const supabase = await createClient();
-  const [
-    {
-      data: { user },
-    },
-    { data: entries },
-  ] = await Promise.all([
-    supabase.auth.getUser(),
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [{ data: entries }, admin] = await Promise.all([
     supabase
       .from("watch_entries")
       .select("*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id)")
       .eq("media_type", "movie")
       .eq("tmdb_id", tmdbId)
       .order("watched_on", { ascending: false }),
+    isAdmin(supabase, user?.id),
   ]);
 
   if (!entries || entries.length === 0) notFound();
@@ -159,6 +158,7 @@ export default async function FilmDetailPage({ params }: { params: Promise<{ id:
                     <EntryActions
                       entry={entry}
                       currentUserId={user.id}
+                      isAdmin={admin}
                       path={`/films/${tmdbId}`}
                     />
                   )}

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/Sidebar";
 import { MobileTabBar } from "@/components/MobileTabBar";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { RefreshButton } from "@/components/RefreshButton";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -25,7 +26,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen pb-20 md:pb-0">
       <Sidebar displayName={displayName} avatarColor={avatarColor} />
-      <ThemeToggle className="fixed right-4 top-4 z-20 h-8 w-14 md:hidden" />
+      <div className="fixed right-4 top-4 z-20 flex items-center gap-2">
+        <RefreshButton className="h-8 w-8" />
+        <ThemeToggle className="h-8 w-14" />
+      </div>
       <div className="md:pl-[232px]">{children}</div>
       <MobileTabBar displayName={displayName} />
     </div>

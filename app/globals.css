@@ -4,10 +4,10 @@
   /* Dark background default = "bleu nuit", used for films and the
      unfiltered/"tout" context. See the [data-media="tv"] override below
      for the séries variant (violet). */
-  --color-bg: #081230;
-  --color-bg-elev: oklch(23% 0.05 266);
-  --color-bg-elev-2: oklch(27% 0.046 266);
-  --color-bg-elev-3: oklch(32% 0.042 266);
+  --color-bg: oklch(24% 0.058 266);
+  --color-bg-elev: oklch(28% 0.052 266);
+  --color-bg-elev-2: oklch(32% 0.048 266);
+  --color-bg-elev-3: oklch(37% 0.044 266);
 
   --color-border: oklch(100% 0 0 / 0.08);
   --color-border-strong: oklch(100% 0 0 / 0.18);
@@ -59,10 +59,10 @@
 /* Séries context (dark mode only) — violet background instead of the
    default bleu nuit. Toggled by MediaBackground on <html data-media="tv">. */
 :root[data-media="tv"]:not([data-theme="light"]) {
-  --color-bg: #180b2e;
-  --color-bg-elev: oklch(23% 0.055 297);
-  --color-bg-elev-2: oklch(27% 0.05 297);
-  --color-bg-elev-3: oklch(32% 0.046 297);
+  --color-bg: oklch(24% 0.063 297);
+  --color-bg-elev: oklch(28% 0.057 297);
+  --color-bg-elev-2: oklch(32% 0.052 297);
+  --color-bg-elev-3: oklch(37% 0.048 297);
 }
 
 body {
