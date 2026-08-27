@@ -12,19 +12,33 @@ type Entry = Tables<"watch_entries">;
 type TopPick = Tables<"top_picks">;
 
 function summarizeOwn(entries: Entry[], mediaType: "movie" | "tv") {
-  const map = new Map<number, { tmdbId: number; title: string; posterPath: string | null; year: number | null }>();
+  const map = new Map<
+    number,
+    { tmdbId: number; title: string; posterPath: string | null; year: number | null; ratings: number[] }
+  >();
   for (const e of entries) {
     if (e.media_type !== mediaType) continue;
-    if (!map.has(e.tmdb_id)) {
+    const existing = map.get(e.tmdb_id);
+    if (existing) {
+      if (e.rating !== null) existing.ratings.push(e.rating);
+    } else {
       map.set(e.tmdb_id, {
         tmdbId: e.tmdb_id,
         title: e.title,
         posterPath: e.poster_path,
         year: e.release_year,
+        ratings: e.rating !== null ? [e.rating] : [],
       });
     }
   }
-  return [...map.values()].sort((a, b) => a.title.localeCompare(b.title, "fr"));
+  return [...map.values()]
+    .map((item) => ({
+      ...item,
+      avgRating: item.ratings.length
+        ? item.ratings.reduce((sum, r) => sum + r, 0) / item.ratings.length
+        : null,
+    }))
+    .sort((a, b) => (b.avgRating ?? -1) - (a.avgRating ?? -1));
 }
 
 const RANKS = [1, 2, 3] as const;
