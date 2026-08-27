@@ -13,7 +13,7 @@ export default async function ProfileSeriesPage() {
 
   const { data: entries } = await supabase
     .from("watch_entries")
-    .select("*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id)")
+    .select("*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id, profiles(display_name))")
     .eq("user_id", user.id)
     .eq("media_type", "tv")
     .order("watched_on", { ascending: false });

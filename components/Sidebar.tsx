@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HomeIcon, FilmIcon, TvIcon, BookmarkIcon, LogInIcon } from "./icons";
+import { HomeIcon, FilmIcon, TvIcon, BookmarkIcon, TrophyIcon, LogInIcon } from "./icons";
 import { initials, avatarColor as hashAvatarColor } from "@/lib/avatar-color";
 import { VERSION } from "@/lib/version";
 
 const LINKS = [
-  { href: "/", label: "Accueil", icon: HomeIcon },
+  { href: "/", label: "Derniers visionnages", icon: HomeIcon },
   { href: "/films", label: "Films", icon: FilmIcon },
   { href: "/series", label: "Séries", icon: TvIcon },
   { href: "/watchlist", label: "À voir", icon: BookmarkIcon },
+  { href: "/tops", label: "Tops", icon: TrophyIcon },
 ];
 
 export function Sidebar({
@@ -84,12 +85,9 @@ export function Sidebar({
         </Link>
       )}
 
-      <a
-        href="https://skalrow.fr"
-        className="mt-4 flex items-center gap-1.5 px-2 text-[12.5px] font-semibold text-text-faint hover:text-text-muted"
-      >
-        ← Retour à skalrow.fr
-      </a>
+      <footer className="site-footer mt-4 px-2">
+        © {new Date().getFullYear()} · made by <span className="footer-brand">Skalrow</span>
+      </footer>
     </aside>
   );
 }

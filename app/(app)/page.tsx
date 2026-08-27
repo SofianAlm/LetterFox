@@ -26,7 +26,7 @@ export default async function HomePage({
 
   let query = supabase
     .from("watch_entries")
-    .select("*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id)")
+    .select("*, profiles(display_name, avatar_color), locations(name), reactions(emoji, user_id, profiles(display_name))")
     .order("watched_on", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(60);
@@ -43,10 +43,10 @@ export default async function HomePage({
   const locations = (locationRows ?? []).map((l) => l.name);
 
   return (
-    <div className="mx-auto max-w-[920px] px-6 pb-20 sm:px-10">
+    <div className="mx-auto max-w-[1240px] px-6 pb-20 sm:px-10">
       <MediaBackground media={activeFilter} />
       <div className="flex flex-wrap items-center justify-between gap-4 py-9">
-        <h1 className="font-display text-[26px] font-bold">Accueil</h1>
+        <h1 className="font-display text-[26px] font-bold">Derniers visionnages</h1>
         <div className="inline-flex gap-1 rounded-full border border-border bg-bg-elev-2 p-1">
           {FILTERS.map((f) => (
             <Link

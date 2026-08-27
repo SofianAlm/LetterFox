@@ -144,6 +144,50 @@ export type Database = {
           },
         ]
       }
+      top_picks: {
+        Row: {
+          created_at: string
+          id: string
+          media_type: string
+          poster_path: string | null
+          rank: number
+          release_year: number | null
+          title: string
+          tmdb_id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          media_type: string
+          poster_path?: string | null
+          rank: number
+          release_year?: number | null
+          title: string
+          tmdb_id: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          media_type?: string
+          poster_path?: string | null
+          rank?: number
+          release_year?: number | null
+          title?: string
+          tmdb_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "top_picks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       watch_entries: {
         Row: {
           comment: string | null

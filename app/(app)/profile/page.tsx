@@ -1,13 +1,11 @@
-import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { initials, avatarColor as hashAvatarColor } from "@/lib/avatar-color";
 import { formatRating } from "@/lib/ratings";
 import { formatFullDate } from "@/lib/date";
-import { posterUrl } from "@/lib/tmdb-image";
 import { PasswordForm } from "@/components/PasswordForm";
 import { ProfileEditForm } from "@/components/ProfileEditForm";
-import { MyEntriesGrid } from "@/components/MyEntriesGrid";
 import { SignOutButton } from "@/components/SignOutButton";
+import { TopPicksEditor } from "@/components/TopPicksEditor";
 import type { Tables } from "@/lib/database.types";
 
 export default async function ProfilePage() {
@@ -17,7 +15,7 @@ export default async function ProfilePage() {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const [{ data: profileRows }, { data: myEntries }] = await Promise.all([
+  const [{ data: profileRows }, { data: myEntries }, { data: myPicks }] = await Promise.all([
     supabase
       .from("profiles")
       .select("display_name, avatar_color, created_at")
@@ -30,6 +28,11 @@ export default async function ProfilePage() {
       .eq("user_id", user.id)
       .order("watched_on", { ascending: false })
       .returns<Tables<"watch_entries">[]>(),
+    supabase
+      .from("top_picks")
+      .select("*")
+      .eq("user_id", user.id)
+      .returns<Tables<"top_picks">[]>(),
   ]);
   const profile = profileRows?.[0];
   const displayName = profile?.display_name ?? user.email ?? "?";
@@ -42,7 +45,6 @@ export default async function ProfilePage() {
   const avgGiven = rated.length
     ? rated.reduce((sum, e) => sum + e.rating!, 0) / rated.length
     : null;
-  const recent = entries.slice(0, 5);
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-[320px_1fr] md:items-start">
@@ -90,61 +92,16 @@ export default async function ProfilePage() {
         </div>
 
         <div className="rounded-2xl border border-border bg-bg-elev p-7">
-          <h3 className="mb-1 text-[15.5px] font-bold">Mes films &amp; séries</h3>
+          <h3 className="mb-1 text-[15.5px] font-bold">Mon top 3</h3>
           <p className="mb-5 text-[13px] text-text-faint">
-            Tout ce que tu as ajouté — {filmCount} film{filmCount > 1 ? "s" : ""} et {seriesCount}{" "}
-            entrée{seriesCount > 1 ? "s" : ""} de série.
+            Choisis tes 3 films et tes 3 séries préférés parmi ce que tu as déjà vu.
           </p>
-          <MyEntriesGrid entries={entries} />
+          <TopPicksEditor entries={entries} picks={myPicks ?? []} />
         </div>
 
         <div className="rounded-2xl border border-border bg-bg-elev p-7">
           <h3 className="mb-5 text-[15.5px] font-bold">Sécurité</h3>
           <PasswordForm />
-        </div>
-
-        <div className="rounded-2xl border border-border bg-bg-elev p-7">
-          <h3 className="mb-4 text-[15.5px] font-bold">Activité récente</h3>
-          {recent.length === 0 ? (
-            <p className="text-sm text-text-faint">Rien pour l&rsquo;instant.</p>
-          ) : (
-            <div className="flex flex-col gap-3.5">
-              {recent.map((e) => {
-                const poster = posterUrl(e.poster_path, "w92");
-                return (
-                  <div key={e.id} className="flex items-center gap-3.5">
-                    <span className="h-[52px] w-9 flex-shrink-0 overflow-hidden rounded-md bg-bg-elev-2">
-                      {poster && (
-                        <Image
-                          src={poster}
-                          alt=""
-                          width={36}
-                          height={52}
-                          className="h-full w-full object-cover"
-                        />
-                      )}
-                    </span>
-                    <span className="flex-1">
-                      <span className="block text-[13.5px] font-bold">
-                        {e.title}
-                        {e.media_type === "tv" &&
-                          e.season_number &&
-                          ` · S${e.season_number}${
-                            e.episode_number ? `E${e.episode_number}` : " entière"
-                          }`}
-                      </span>
-                      <span className="block text-xs text-text-faint">
-                        {formatFullDate(e.watched_on)}
-                      </span>
-                    </span>
-                    <span className="font-display text-sm font-extrabold text-accent">
-                      {e.is_rewatch ? "Rewatch" : `${formatRating(e.rating)}/10`}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
         </div>
       </div>
     </div>

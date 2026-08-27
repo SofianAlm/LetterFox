@@ -5,19 +5,25 @@ import Link from "next/link";
 import Image from "next/image";
 import { posterUrl } from "@/lib/tmdb-image";
 import { initials, avatarColor } from "@/lib/avatar-color";
-import { summarizeByTitle, titleAverage, latestSeason, type TitleSummary } from "@/lib/aggregate";
+import {
+  summarizeByTitle,
+  titleAverage,
+  latestSeason,
+  latestWatchedOn,
+  type TitleSummary,
+} from "@/lib/aggregate";
 import { formatRating } from "@/lib/ratings";
 import type { FeedEntry } from "@/lib/feed";
-import { PlusIcon } from "./icons";
+import { PlusIcon, ChevronDownIcon } from "./icons";
 
 type Profile = { id: string; display_name: string; avatar_color: string | null };
 
 const SORT_OPTIONS = [
-  { value: "added", label: "Date d'ajout" },
-  { value: "alpha", label: "Alphabétique" },
-  { value: "release", label: "Date de sortie" },
-  { value: "rating", label: "Note" },
-] as const;
+  { value: "added", label: "Date d'ajout", defaultDir: "desc" },
+  { value: "alpha", label: "Alphabétique", defaultDir: "asc" },
+  { value: "release", label: "Date de sortie", defaultDir: "desc" },
+  { value: "rating", label: "Note", defaultDir: "desc" },
+] as const satisfies { value: string; label: string; defaultDir: "asc" | "desc" }[];
 
 export function BrowseGrid({
   entries,
@@ -38,6 +44,7 @@ export function BrowseGrid({
 }) {
   const [excluded, setExcluded] = useState<Set<string>>(new Set());
   const [sortBy, setSortBy] = useState<(typeof SORT_OPTIONS)[number]["value"]>("added");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const accentClass = mediaType === "movie" ? "text-blue" : "text-purple";
 
   const filtered = useMemo(
@@ -46,14 +53,28 @@ export function BrowseGrid({
   );
   const summaries = useMemo(() => summarizeByTitle(filtered), [filtered]);
   const visibleSummaries = useMemo(() => {
-    if (sortBy === "added") return summaries;
     const arr = [...summaries];
-    if (sortBy === "alpha") arr.sort((a, b) => a.title.localeCompare(b.title, "fr"));
-    else if (sortBy === "release") arr.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
-    else if (sortBy === "rating")
-      arr.sort((a, b) => (titleAverage(b) ?? -1) - (titleAverage(a) ?? -1));
+    arr.sort((a, b) => {
+      switch (sortBy) {
+        case "alpha":
+          return a.title.localeCompare(b.title, "fr");
+        case "release":
+          return (a.year ?? 0) - (b.year ?? 0);
+        case "rating":
+          return (titleAverage(a) ?? -1) - (titleAverage(b) ?? -1);
+        case "added":
+        default:
+          return latestWatchedOn(a) - latestWatchedOn(b);
+      }
+    });
+    if (sortDir === "desc") arr.reverse();
     return arr;
-  }, [summaries, sortBy]);
+  }, [summaries, sortBy, sortDir]);
+
+  function handleSortChange(value: (typeof SORT_OPTIONS)[number]["value"]) {
+    setSortBy(value);
+    setSortDir(SORT_OPTIONS.find((o) => o.value === value)!.defaultDir);
+  }
 
   function toggle(id: string) {
     setExcluded((prev) => {
@@ -104,20 +125,33 @@ export function BrowseGrid({
 
       <div className="mb-8 flex flex-wrap items-center gap-2.5 border-b border-border pb-6">
         <span className="text-[12.5px] font-bold text-text-faint">Trier par</span>
-        {SORT_OPTIONS.map((s) => (
-          <button
-            key={s.value}
-            type="button"
-            onClick={() => setSortBy(s.value)}
-            className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
-              sortBy === s.value
-                ? `bg-accent-soft ${mediaType === "movie" ? "text-blue" : "text-purple"}`
-                : "bg-bg-elev-2 text-text-muted"
-            }`}
+        <div className="relative">
+          <select
+            value={sortBy}
+            onChange={(e) =>
+              handleSortChange(e.target.value as (typeof SORT_OPTIONS)[number]["value"])
+            }
+            className="appearance-none rounded-full border border-border-strong bg-bg-elev-2 py-2 pl-4 pr-9 text-[13px] font-semibold text-text focus:border-accent focus:outline-none"
           >
-            {s.label}
-          </button>
-        ))}
+            {SORT_OPTIONS.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-text-faint" />
+        </div>
+        <button
+          type="button"
+          onClick={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
+          aria-label={sortDir === "asc" ? "Ordre croissant" : "Ordre décroissant"}
+          title={sortDir === "asc" ? "Croissant" : "Décroissant"}
+          className="flex h-[34px] w-[34px] items-center justify-center rounded-full border border-border-strong bg-bg-elev-2 text-text-muted"
+        >
+          <ChevronDownIcon
+            className={`h-4 w-4 transition-transform ${sortDir === "asc" ? "rotate-180" : ""}`}
+          />
+        </button>
       </div>
 
       {visibleSummaries.length === 0 ? (
