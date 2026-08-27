@@ -6,7 +6,6 @@ import { HomeIcon, FilmIcon, TvIcon, BookmarkIcon, LogInIcon } from "./icons";
 import { initials, avatarColor as hashAvatarColor } from "@/lib/avatar-color";
 import { VERSION } from "@/lib/version";
 import { ThemeToggle } from "./ThemeToggle";
-import { FoxLogo } from "./FoxLogo";
 
 const LINKS = [
   { href: "/", label: "Accueil", icon: HomeIcon },
@@ -27,15 +26,15 @@ export function Sidebar({
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-[232px] flex-col border-r border-border bg-bg px-4 py-6 md:flex">
       <div className="flex items-center gap-2 px-2">
-        <Link href="/" className="flex min-w-0 flex-1 items-center gap-2.5">
-          <FoxLogo className="h-6 w-6 flex-shrink-0" />
+        <Link href="/" className="flex min-w-0 flex-1 items-center gap-2">
+          <span className="text-xl leading-none">🎬</span>
           <span className="font-display text-[17px] font-extrabold tracking-tight">LetterFox</span>
         </Link>
-        <ThemeToggle className="h-7 w-7 flex-shrink-0" />
+        <span className="flex-shrink-0 rounded-full bg-bg-elev-2 px-2 py-0.5 text-[10px] font-bold text-text-faint">
+          {VERSION}
+        </span>
       </div>
-      <span className="mt-2 inline-block w-fit rounded-full bg-bg-elev-2 px-2 py-0.5 text-[10px] font-bold text-text-faint">
-        {VERSION}
-      </span>
+      <ThemeToggle className="mt-3 h-8 w-8" />
 
       <nav className="mt-8 flex flex-col gap-1">
         {LINKS.map((link) => {
