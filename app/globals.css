@@ -1,10 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: oklch(12% 0.024 265);
-  --color-bg-elev: oklch(16% 0.026 265);
-  --color-bg-elev-2: oklch(20% 0.028 265);
-  --color-bg-elev-3: oklch(25% 0.03 265);
+  /* Dark background default = "bleu nuit", used for films and the
+     unfiltered/"tout" context. See the [data-media="tv"] override below
+     for the séries variant (violet). */
+  --color-bg: #081230;
+  --color-bg-elev: oklch(23% 0.05 266);
+  --color-bg-elev-2: oklch(27% 0.046 266);
+  --color-bg-elev-3: oklch(32% 0.042 266);
 
   --color-border: oklch(100% 0 0 / 0.08);
   --color-border-strong: oklch(100% 0 0 / 0.18);
@@ -51,6 +54,15 @@
   --color-text: oklch(20% 0.016 265);
   --color-text-muted: oklch(42% 0.018 265);
   --color-text-faint: oklch(58% 0.016 265);
+}
+
+/* Séries context (dark mode only) — violet background instead of the
+   default bleu nuit. Toggled by MediaBackground on <html data-media="tv">. */
+:root[data-media="tv"]:not([data-theme="light"]) {
+  --color-bg: #180b2e;
+  --color-bg-elev: oklch(23% 0.055 297);
+  --color-bg-elev-2: oklch(27% 0.05 297);
+  --color-bg-elev-3: oklch(32% 0.046 297);
 }
 
 body {

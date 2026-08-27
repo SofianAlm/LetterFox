@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { groupFeedEntries, type FeedEntry } from "@/lib/feed";
 import { FeedEntryGroup } from "@/components/FeedEntryGroup";
+import { MediaBackground } from "@/components/MediaBackground";
 
 const FILTERS = [
   { value: "all", label: "Tout" },
@@ -37,6 +38,7 @@ export default async function HomePage({
 
   return (
     <div className="mx-auto max-w-[920px] px-6 pb-20 sm:px-10">
+      <MediaBackground media={activeFilter} />
       <div className="flex flex-wrap items-center justify-between gap-4 py-9">
         <h1 className="font-display text-[26px] font-bold">Accueil</h1>
         <div className="inline-flex gap-1 rounded-full border border-border bg-bg-elev-2 p-1">

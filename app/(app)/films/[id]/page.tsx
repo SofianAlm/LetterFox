@@ -9,6 +9,7 @@ import { initials, avatarColor } from "@/lib/avatar-color";
 import { formatFullDate } from "@/lib/date";
 import { ReactionBar } from "@/components/ReactionBar";
 import { EntryActions } from "@/components/EntryActions";
+import { MediaBackground } from "@/components/MediaBackground";
 import { ChevronLeftIcon } from "@/components/icons";
 import type { FeedEntry } from "@/lib/feed";
 
@@ -40,6 +41,7 @@ export default async function FilmDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="mx-auto max-w-[1120px] px-6 pb-24 pt-8 sm:px-10">
+      <MediaBackground media="movie" />
       <Link
         href="/films"
         className="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-text-muted"

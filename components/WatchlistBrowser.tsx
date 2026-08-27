@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { WatchlistGrid } from "./WatchlistGrid";
 import { AddWatchlistModal } from "./AddWatchlistModal";
+import { useMediaBackground } from "./MediaBackground";
 import { PlusIcon } from "./icons";
 import { initials, avatarColor } from "@/lib/avatar-color";
 import type { WatchlistItem } from "@/app/(app)/watchlist/page";
@@ -29,6 +30,7 @@ export function WatchlistBrowser({
 }) {
   const [open, setOpen] = useState(false);
   const [typeFilter, setTypeFilter] = useState<(typeof TYPE_TABS)[number]["value"]>("all");
+  useMediaBackground(typeFilter);
   const [selectedWanters, setSelectedWanters] = useState<Set<string>>(new Set());
   const [wantMode, setWantMode] = useState<"any" | "all">("any");
   const [genreFilter, setGenreFilter] = useState<string>("all");
