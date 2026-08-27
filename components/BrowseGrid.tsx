@@ -5,27 +5,39 @@ import Link from "next/link";
 import Image from "next/image";
 import { posterUrl } from "@/lib/tmdb-image";
 import { initials, avatarColor } from "@/lib/avatar-color";
-import { summarizeByTitle, titleAverage, latestSeason } from "@/lib/aggregate";
+import { summarizeByTitle, titleAverage, latestSeason, type TitleSummary } from "@/lib/aggregate";
 import { formatRating } from "@/lib/ratings";
 import type { FeedEntry } from "@/lib/feed";
 import { PlusIcon } from "./icons";
 
 type Profile = { id: string; display_name: string; avatar_color: string | null };
 
+const RATING_FILTERS = [
+  { value: 0, label: "Toutes les notes" },
+  { value: 8, label: "8+" },
+  { value: 6, label: "6+" },
+  { value: 4, label: "4+" },
+] as const;
+
 export function BrowseGrid({
   entries,
   profiles,
   mediaType,
   basePath,
+  currentUserId,
   onAdd,
+  onQuickAdd,
 }: {
   entries: FeedEntry[];
   profiles: Profile[];
   mediaType: "movie" | "tv";
   basePath: string;
+  currentUserId?: string;
   onAdd: () => void;
+  onQuickAdd?: (summary: TitleSummary) => void;
 }) {
   const [excluded, setExcluded] = useState<Set<string>>(new Set());
+  const [minRating, setMinRating] = useState(0);
   const accentClass = mediaType === "movie" ? "text-blue" : "text-purple";
 
   const filtered = useMemo(
@@ -33,6 +45,13 @@ export function BrowseGrid({
     [entries, excluded],
   );
   const summaries = useMemo(() => summarizeByTitle(filtered), [filtered]);
+  const visibleSummaries = useMemo(() => {
+    if (minRating === 0) return summaries;
+    return summaries.filter((s) => {
+      const avg = titleAverage(s);
+      return avg !== null && avg >= minRating;
+    });
+  }, [summaries, minRating]);
 
   function toggle(id: string) {
     setExcluded((prev) => {
@@ -45,7 +64,7 @@ export function BrowseGrid({
 
   return (
     <div className="relative">
-      <div className="mb-8 flex flex-wrap items-center gap-2.5 border-b border-border pb-6">
+      <div className="mb-5 flex flex-wrap items-center gap-2.5 border-b border-border pb-5">
         <span className="text-[12.5px] font-bold text-text-faint">Filtrer par personne</span>
         <button
           type="button"
@@ -81,11 +100,29 @@ export function BrowseGrid({
         })}
       </div>
 
-      {summaries.length === 0 ? (
+      <div className="mb-8 flex flex-wrap items-center gap-2.5 border-b border-border pb-6">
+        <span className="text-[12.5px] font-bold text-text-faint">Filtrer par note</span>
+        {RATING_FILTERS.map((f) => (
+          <button
+            key={f.value}
+            type="button"
+            onClick={() => setMinRating(f.value)}
+            className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
+              minRating === f.value
+                ? `bg-accent-soft ${mediaType === "movie" ? "text-blue" : "text-purple"}`
+                : "bg-bg-elev-2 text-text-muted"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {visibleSummaries.length === 0 ? (
         <p className="text-text-faint">Rien à afficher pour l&rsquo;instant.</p>
       ) : (
         <div className="grid grid-cols-2 gap-x-[22px] gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {summaries.map((summary) => {
+          {visibleSummaries.map((summary) => {
             const poster = posterUrl(summary.posterPath, "w342");
             const avg = titleAverage(summary);
             const meta =
@@ -95,7 +132,11 @@ export function BrowseGrid({
                     summary.entries.length > 1 ? "s" : ""
                   }`;
             return (
-              <Link key={summary.tmdbId} href={`${basePath}/${summary.tmdbId}`} className="block">
+              <Link
+                key={summary.tmdbId}
+                href={`${basePath}/${summary.tmdbId}`}
+                className="group block"
+              >
                 <div className="relative aspect-[2/3] overflow-hidden rounded-[10px] bg-bg-elev-2 shadow-lg">
                   {poster && (
                     <Image src={poster} alt="" fill sizes="200px" className="object-cover" />
@@ -105,6 +146,23 @@ export function BrowseGrid({
                   >
                     {formatRating(avg)}
                   </div>
+                  {currentUserId && onQuickAdd && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onQuickAdd(summary);
+                      }}
+                      aria-label={
+                        mediaType === "movie" ? "Ajouter ce film" : "Ajouter cette série"
+                      }
+                      className="absolute left-2 top-2 flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1.5 text-[11px] font-bold text-white opacity-100 backdrop-blur transition-opacity md:opacity-0 md:group-hover:opacity-100"
+                    >
+                      <PlusIcon className="h-3 w-3" />
+                      Ajouter
+                    </button>
+                  )}
                 </div>
                 <h3 className="mt-2.5 line-clamp-2 text-sm font-bold leading-tight">
                   {summary.title}
@@ -119,7 +177,7 @@ export function BrowseGrid({
       <button
         type="button"
         onClick={onAdd}
-        className={`fixed bottom-24 right-6 z-10 flex h-[58px] w-[58px] items-center justify-center rounded-full text-on-accent shadow-xl md:bottom-10 sm:right-10 ${
+        className={`fixed bottom-10 right-6 z-10 flex h-[58px] w-[58px] items-center justify-center rounded-full text-on-accent shadow-xl sm:right-10 ${
           mediaType === "movie" ? "bg-blue" : "bg-purple"
         }`}
         aria-label={mediaType === "movie" ? "Ajouter un film" : "Ajouter une série"}

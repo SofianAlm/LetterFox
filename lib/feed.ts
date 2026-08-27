@@ -34,7 +34,10 @@ export function groupFeedEntries(entries: FeedEntry[]): FeedEntry[][] {
     const key = groupKey(entry);
     if (seen.has(key)) continue;
     seen.add(key);
-    ordered.push(groups.get(key)!);
+    const group = groups.get(key)!;
+    // Best rating first when several people reviewed the same thing the same day.
+    group.sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1));
+    ordered.push(group);
   }
   return ordered;
 }

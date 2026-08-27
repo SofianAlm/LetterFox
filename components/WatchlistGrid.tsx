@@ -8,7 +8,7 @@ import { markWatchlistItemWatched, deleteWatchlistItem, toggleWant } from "@/app
 import { MarkWatchedPrompt } from "./MarkWatchedPrompt";
 import { AddFilmModal } from "./AddFilmModal";
 import { AddSeriesModal } from "./AddSeriesModal";
-import { CheckIcon, TrashIcon, PlusIcon } from "./icons";
+import { CheckIcon, TrashIcon, PlusIcon, HeartIcon } from "./icons";
 import type { WatchlistItem } from "@/app/(app)/watchlist/page";
 
 export function WatchlistGrid({
@@ -42,7 +42,7 @@ export function WatchlistGrid({
       <button
         type="button"
         onClick={onAdd}
-        className="fixed bottom-24 right-6 z-10 flex h-[58px] w-[58px] items-center justify-center rounded-full bg-accent text-on-accent shadow-xl md:bottom-10 sm:right-10"
+        className="fixed bottom-10 right-6 z-10 flex h-[58px] w-[58px] items-center justify-center rounded-full bg-accent text-on-accent shadow-xl sm:right-10"
         aria-label="Ajouter à voir"
       >
         <PlusIcon className="h-6 w-6" />
@@ -79,11 +79,21 @@ function WatchlistCard({
     <div>
       <div className="relative aspect-[2/3] overflow-hidden rounded-[10px] bg-bg-elev-2 shadow-lg">
         {poster && <Image src={poster} alt="" fill sizes="200px" className="object-cover" />}
-        <div
-          className={`absolute left-2 top-2 rounded-full bg-black/70 px-2 py-1 text-[10.5px] font-extrabold uppercase tracking-wide backdrop-blur ${accent}`}
+        <button
+          type="button"
+          disabled={isPending}
+          onClick={() =>
+            startTransition(() => {
+              toggleWant(item.id, iWant);
+            })
+          }
+          aria-label={iWant ? "Retirer de mes envies" : "Je veux voir aussi"}
+          className={`absolute left-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 backdrop-blur ${
+            iWant ? "text-red-400" : "text-white hover:text-red-400"
+          }`}
         >
-          {item.media_type === "movie" ? "Film" : "Série"}
-        </div>
+          <HeartIcon className="h-3.5 w-3.5" filled={iWant} />
+        </button>
         <button
           type="button"
           disabled={isPending}
@@ -93,6 +103,11 @@ function WatchlistCard({
         >
           <CheckIcon className="h-3.5 w-3.5" />
         </button>
+        <div
+          className={`absolute bottom-2 left-2 rounded-full bg-black/70 px-2 py-1 text-[10.5px] font-extrabold uppercase tracking-wide backdrop-blur ${accent}`}
+        >
+          {item.media_type === "movie" ? "Film" : "Série"}
+        </div>
         {canDelete && (
           <button
             type="button"
@@ -120,35 +135,18 @@ function WatchlistCard({
       {item.genres.length > 0 && (
         <p className="mt-0.5 truncate text-[11px] text-text-faint">{item.genres.join(" · ")}</p>
       )}
-      <div className="mt-1 flex items-center justify-between gap-1.5">
-        <div className="flex items-center gap-1.5 overflow-hidden">
-          <span
-            className="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-full font-display text-[8px] font-extrabold text-on-accent"
-            style={{
-              background:
-                item.added_by_profile?.avatar_color ??
-                avatarColor(item.added_by_profile?.display_name ?? "?"),
-            }}
-          >
-            {initials(item.added_by_profile?.display_name ?? "?")}
-          </span>
-          <p className="truncate text-[12px] text-text-faint">{item.release_year ?? ""}</p>
-        </div>
-        <button
-          type="button"
-          disabled={isPending}
-          onClick={() =>
-            startTransition(() => {
-              toggleWant(item.id, iWant);
-            })
-          }
-          aria-label={iWant ? "Retirer de mes envies" : "Je veux voir aussi"}
-          className={`flex-shrink-0 text-[15px] leading-none ${
-            iWant ? "text-red-400" : "text-text-faint hover:text-red-400"
-          }`}
+      <div className="mt-1 flex items-center gap-1.5 overflow-hidden">
+        <span
+          className="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-full font-display text-[8px] font-extrabold text-on-accent"
+          style={{
+            background:
+              item.added_by_profile?.avatar_color ??
+              avatarColor(item.added_by_profile?.display_name ?? "?"),
+          }}
         >
-          {iWant ? "♥" : "♡"}
-        </button>
+          {initials(item.added_by_profile?.display_name ?? "?")}
+        </span>
+        <p className="truncate text-[12px] text-text-faint">{item.release_year ?? ""}</p>
       </div>
       {item.wants.length > 0 && (
         <div className="mt-1.5 flex -space-x-1.5">

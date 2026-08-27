@@ -28,6 +28,7 @@ export default async function FilmsPage() {
         entries={(entries ?? []) as unknown as FeedEntry[]}
         profiles={profiles ?? []}
         locations={(locations ?? []).map((l) => l.name)}
+        currentUserId={user.id}
       />
     </div>
   );
