@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { BrowseGrid } from "./BrowseGrid";
 import { AddFilmModal } from "./AddFilmModal";
+import { AddFilmChoiceModal } from "./AddFilmChoiceModal";
+import { AddFilmChainModal } from "./AddFilmChainModal";
 import { PlusIcon } from "./icons";
 import type { FeedEntry } from "@/lib/feed";
 import type { TitleSummary } from "@/lib/aggregate";
@@ -19,6 +21,8 @@ export function FilmsBrowser({
   currentUserId: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [choiceOpen, setChoiceOpen] = useState(false);
+  const [chainOpen, setChainOpen] = useState(false);
   const [quickAdd, setQuickAdd] = useState<TitleSummary | null>(null);
   const count = entries.length;
 
@@ -33,10 +37,7 @@ export function FilmsBrowser({
         </div>
         <button
           type="button"
-          onClick={() => {
-            setQuickAdd(null);
-            setOpen(true);
-          }}
+          onClick={() => setChoiceOpen(true)}
           className="flex items-center gap-2 rounded-[10px] bg-blue px-4 py-2.5 text-[13.5px] font-bold text-on-accent"
         >
           <PlusIcon className="h-4 w-4" />
@@ -50,15 +51,27 @@ export function FilmsBrowser({
         mediaType="movie"
         basePath="/films"
         currentUserId={currentUserId}
-        onAdd={() => {
-          setQuickAdd(null);
-          setOpen(true);
-        }}
+        onAdd={() => setChoiceOpen(true)}
         onQuickAdd={(summary) => {
           setQuickAdd(summary);
           setOpen(true);
         }}
       />
+      {choiceOpen && (
+        <AddFilmChoiceModal
+          onClose={() => setChoiceOpen(false)}
+          onChooseSingle={() => {
+            setChoiceOpen(false);
+            setQuickAdd(null);
+            setOpen(true);
+          }}
+          onChooseChain={() => {
+            setChoiceOpen(false);
+            setChainOpen(true);
+          }}
+        />
+      )}
+      {chainOpen && <AddFilmChainModal onClose={() => setChainOpen(false)} locations={locations} />}
       {open &&
         (() => {
           const source = quickAdd?.entries[0];

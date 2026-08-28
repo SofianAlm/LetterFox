@@ -85,6 +85,77 @@ export async function addMovieEntry(
   return { error: null };
 }
 
+export type ChainFilmInput = {
+  tmdb_id: number;
+  title: string;
+  poster_path: string | null;
+  release_year: number | null;
+  genres: string[];
+  watched_on: string;
+  location: string;
+  language: "VF" | "VO";
+  rating: number | null;
+  comment: string | null;
+  is_rewatch: boolean;
+};
+
+export async function addMovieEntries(
+  _prev: AddEntryState,
+  formData: FormData,
+): Promise<AddEntryState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Non connecté." };
+
+  let items: ChainFilmInput[];
+  try {
+    items = JSON.parse(String(formData.get("items") ?? "[]"));
+  } catch {
+    return { error: "Données invalides." };
+  }
+  if (!Array.isArray(items) || items.length === 0) return { error: "Aucun film sélectionné." };
+
+  const userId = user.id;
+  const locationCache = new Map<string, string | null>();
+  async function resolveCached(name: string) {
+    const trimmed = name.trim();
+    if (!trimmed) return null;
+    if (locationCache.has(trimmed)) return locationCache.get(trimmed)!;
+    const id = await resolveLocationId(supabase, trimmed, userId);
+    locationCache.set(trimmed, id);
+    return id;
+  }
+
+  const rows = [];
+  for (const item of items) {
+    rows.push({
+      user_id: userId,
+      media_type: "movie",
+      granularity: "movie",
+      tmdb_id: item.tmdb_id,
+      title: item.title,
+      poster_path: item.poster_path || null,
+      release_year: item.release_year,
+      genres: Array.isArray(item.genres) ? item.genres : [],
+      watched_on: item.watched_on,
+      location_id: await resolveCached(item.location ?? ""),
+      language: item.language === "VO" ? "VO" : "VF",
+      rating: item.is_rewatch ? null : item.rating,
+      comment: item.is_rewatch ? null : item.comment?.trim() || null,
+      is_rewatch: item.is_rewatch,
+    });
+  }
+
+  const { error } = await supabase.from("watch_entries").insert(rows);
+  if (error) return { error: "Impossible d'ajouter ces films." };
+
+  revalidatePath("/films");
+  revalidatePath("/");
+  return { error: null };
+}
+
 export async function addSeriesEntry(
   _prev: AddEntryState,
   formData: FormData,
