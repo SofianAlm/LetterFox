@@ -48,6 +48,30 @@ export async function searchTv(query: string) {
   return data.results;
 }
 
+export type TmdbCollectionResult = {
+  id: number;
+  name: string;
+  poster_path: string | null;
+};
+
+export async function searchCollections(query: string) {
+  const data = await tmdbFetch<{ results: TmdbCollectionResult[] }>("/search/collection", {
+    query,
+  });
+  return data.results;
+}
+
+export type TmdbCollectionDetails = {
+  id: number;
+  name: string;
+  poster_path: string | null;
+  parts: TmdbMovieResult[];
+};
+
+export async function getCollectionDetails(collectionId: number) {
+  return tmdbFetch<TmdbCollectionDetails>(`/collection/${collectionId}`);
+}
+
 export type TmdbGenre = { id: number; name: string };
 
 export async function getMovieGenres() {
