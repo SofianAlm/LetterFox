@@ -128,20 +128,20 @@ export function EditEntryModal({ entry, onClose }: { entry: FeedEntry; onClose: 
 
         {state.error && <p className="text-sm text-red-400">{state.error}</p>}
 
-        <div className="flex justify-end gap-2.5">
+        <div className="flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-[10px] border border-border-strong px-5 py-3 text-sm font-bold"
+            className="w-full rounded-[10px] border border-border-strong px-5 py-3 text-sm font-bold sm:w-auto"
           >
             Annuler
           </button>
           <button
             type="submit"
             disabled={pending}
-            className={`rounded-[10px] ${
+            className={`w-full rounded-[10px] ${
               accent === "blue" ? "bg-blue" : "bg-purple"
-            } px-5 py-3 text-sm font-bold text-on-accent disabled:opacity-60`}
+            } px-5 py-3 text-sm font-bold text-on-accent disabled:opacity-60 sm:w-auto`}
           >
             {pending ? "Enregistrement…" : "Enregistrer"}
           </button>

@@ -207,18 +207,18 @@ export function AddWatchlistModal({ onClose }: { onClose: () => void }) {
 
             {state.error && <p className="mt-3 text-sm text-red-400">{state.error}</p>}
 
-            <div className="mt-6 flex justify-end gap-2.5">
+            <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-[10px] border border-border-strong px-5 py-3 text-sm font-bold"
+                className="w-full rounded-[10px] border border-border-strong px-5 py-3 text-sm font-bold sm:w-auto"
               >
                 Annuler
               </button>
               <button
                 type="submit"
                 disabled={pending}
-                className="rounded-[10px] bg-accent px-5 py-3 text-sm font-bold text-on-accent disabled:opacity-60"
+                className="w-full rounded-[10px] bg-accent px-5 py-3 text-sm font-bold text-on-accent disabled:opacity-60 sm:w-auto"
               >
                 {pending ? "Ajout…" : "Ajouter à la liste"}
               </button>
