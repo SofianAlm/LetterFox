@@ -82,8 +82,8 @@ function ChainItemCard({
             />
           </label>
 
-          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div>
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-4">
+            <div className="sm:col-span-1">
               <label className="mb-1 block text-[11px] font-bold text-text-faint">Langue</label>
               <div className="flex rounded-[8px] border border-border bg-bg-elev-3 p-0.5">
                 {(["VF", "VO"] as const).map((l) => (
@@ -100,7 +100,7 @@ function ChainItemCard({
                 ))}
               </div>
             </div>
-            <div>
+            <div className="sm:col-span-1">
               <label className="mb-1 block text-[11px] font-bold text-text-faint">Date</label>
               <input
                 type="date"
@@ -109,7 +109,7 @@ function ChainItemCard({
                 className="w-full rounded-[8px] border border-border-strong bg-bg-elev-3 px-2 py-1.5 text-[12.5px] focus:border-accent focus:outline-none"
               />
             </div>
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="mb-1 block text-[11px] font-bold text-text-faint">Lieu</label>
               <input
                 value={item.location}
@@ -410,18 +410,18 @@ export function AddFilmChainModal({
 
         {state.error && <p className="px-6 pb-3 text-sm text-red-400">{state.error}</p>}
 
-        <div className="flex justify-end gap-2.5 border-t border-border p-6">
+        <div className="flex flex-col-reverse gap-2.5 border-t border-border p-6 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-[10px] border border-border-strong px-5 py-3 text-sm font-bold"
+            className="w-full rounded-[10px] border border-border-strong px-5 py-3 text-sm font-bold sm:w-auto"
           >
             Annuler
           </button>
           <button
             type="submit"
             disabled={pending || items.length === 0}
-            className="rounded-[10px] bg-blue px-5 py-3 text-sm font-bold text-on-accent disabled:opacity-60"
+            className="w-full rounded-[10px] bg-blue px-5 py-3 text-sm font-bold text-on-accent disabled:opacity-60 sm:w-auto"
           >
             {pending ? "Ajout…" : `Ajouter ${items.length || ""} film${items.length > 1 ? "s" : ""}`}
           </button>
