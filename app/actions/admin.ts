@@ -59,6 +59,36 @@ export async function createAccount(
   return { error: null, success: true };
 }
 
+export type ResetPasswordState = { error: string | null; success: boolean };
+
+export async function resetPassword(
+  _prev: ResetPasswordState,
+  formData: FormData,
+): Promise<ResetPasswordState> {
+  if (!(await isCurrentUserAdmin())) {
+    return { error: "Réservé aux administrateurs.", success: false };
+  }
+
+  const userId = String(formData.get("user_id") ?? "");
+  const password = String(formData.get("password") ?? "");
+
+  if (!userId || !password) {
+    return { error: "Tous les champs sont obligatoires.", success: false };
+  }
+  if (password.length < 8) {
+    return { error: "Le mot de passe doit faire au moins 8 caractères.", success: false };
+  }
+
+  const admin = createAdminClient();
+  const { error } = await admin.auth.admin.updateUserById(userId, { password });
+
+  if (error) {
+    return { error: "Impossible de réinitialiser ce mot de passe.", success: false };
+  }
+
+  return { error: null, success: true };
+}
+
 export type BackfillGenresState = { error: string | null; updated: number | null };
 
 export async function backfillGenres(): Promise<BackfillGenresState> {
