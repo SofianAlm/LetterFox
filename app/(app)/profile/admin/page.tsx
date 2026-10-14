@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CreateAccountForm } from "@/components/CreateAccountForm";
 import { BackfillGenresButton } from "@/components/BackfillGenresButton";
+import { AccountsList } from "@/components/AccountsList";
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -20,9 +21,9 @@ export default async function AdminPage() {
 
   const { data: allProfiles } = await supabase
     .from("profiles")
-    .select("display_name, is_admin")
+    .select("id, display_name, is_admin")
     .order("display_name")
-    .returns<{ display_name: string; is_admin: boolean }[]>();
+    .returns<{ id: string; display_name: string; is_admin: boolean }[]>();
 
   return (
     <div className="flex flex-col gap-6">
@@ -46,18 +47,11 @@ export default async function AdminPage() {
 
       {allProfiles && allProfiles.length > 0 && (
         <div className="rounded-2xl border border-border bg-bg-elev p-7">
-          <h3 className="mb-4 text-[15.5px] font-bold">Comptes existants</h3>
-          <div className="flex flex-wrap gap-2">
-            {allProfiles.map((p) => (
-              <span
-                key={p.display_name}
-                className="rounded-full bg-bg-elev-2 px-3.5 py-1.5 text-xs font-semibold text-text-muted"
-              >
-                {p.display_name}
-                {p.is_admin && <span className="ml-1.5 text-accent">· admin</span>}
-              </span>
-            ))}
-          </div>
+          <h3 className="mb-1 text-[15.5px] font-bold">Comptes existants</h3>
+          <p className="mb-5 text-[13px] text-text-faint">
+            Quelqu&rsquo;un a oublié son mot de passe ? Réinitialise-le ici.
+          </p>
+          <AccountsList profiles={allProfiles} />
         </div>
       )}
     </div>
